@@ -12,10 +12,12 @@
       WebRTC Javascript library and
       <a href="http://www.westonsoftware.com/" target="_blank">Andy Weston</a>
       for his Vue implementation. Design by
-      <a href="https://bandeins.de/" target="_blank">Max Müsgens</a>
+      <a href="https://bandeins.de/" target="_blank">Max Müsgens</a>. Conception
+      & idea by
+      <a href="http://www.markus-h.de/" target="_blank">Markus Handke.</a>
     </p>
     <a href="https://westwerk.ac" target="_blank" class="link"
-      >© {{ year }} Alexander Classen - westwerk</a
+      >Beta © {{ year }} Alexander Classen - powered by westwerk</a
     >
   </div>
 </template>
