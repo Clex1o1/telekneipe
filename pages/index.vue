@@ -69,6 +69,11 @@
         </vue-webrtc>
       </div>
     </transition>
+    <audio ref="soundBeer" class="sound beer" src="/sounds/beer.mp3"></audio>
+    <audio ref="soundDoor" class="sound door" src="/sounds/door.mp3"></audio>
+    <a href="https://westwerk.ac" target="_blank" class="copyright link"
+      >Beta © {{ year }} Alexander Classen - powered by westwerk</a
+    >
   </div>
 </template>
 
@@ -80,7 +85,7 @@ export default {
     uuidv4,
     loaded: false,
     uuid: '0',
-    roomId: 'westwerk',
+    roomId: 'Jedermann`s',
     showControls: false,
     showVideos: false,
     videoLink: '',
@@ -133,7 +138,8 @@ export default {
     joinRoom() {
       this.$refs.video.join()
       this.showControls = false
-      this.videoLink = window.location.origin + '?roomId=' + this.roomId
+      this.videoLink =
+        window.location.origin + '?roomId=' + encodeURIComponent(this.roomId)
     },
     leaveRoom() {
       this.$refs.video.leave()
@@ -147,8 +153,11 @@ export default {
       this.$refs.video.videoList.map(($k) => {
         this.videoIds.push($k.id)
       })
+      this.$refs.soundBeer.play()
     },
-    leftRoom(video) {},
+    leftRoom(video) {
+      this.$refs.soundDoor.play()
+    },
     linkCopied() {
       this.shareMessage = true
       window.setTimeout(() => {
@@ -182,7 +191,9 @@ export default {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  background: url(/images/brickwall-pattern.jpg);
+  background: linear-gradient(0deg, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, 0) 100%),
+    url(/images/brickwall-pattern.jpg);
+  background-size: 60px;
   min-height: 100vh;
 }
 .join-screen {
@@ -218,6 +229,10 @@ export default {
   display: grid;
   grid-gap: 4em 2em;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.sound {
+  visibility: hidden;
 }
 
 .controls {
@@ -376,6 +391,11 @@ export default {
     grid-template-columns: repeat(auto-fit, 136px);
     grid-gap: var(--space-small);
   }
+}
+.copyright {
+  position: fixed;
+  bottom: var(--space-small);
+  right: var(--space-small);
 }
 @keyframes logo {
   0% {
