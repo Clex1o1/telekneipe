@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "nuxt": "^2.0.0",
-    "nuxt-socket-io": "^1.0.21",
+    "socket.io-client": "^2.3.0",
     "uuid": "^7.0.2",
     "v-clipboard": "^2.2.2",
     "vue-mq": "^1.0.1",

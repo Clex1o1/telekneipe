@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <header :class="'header ' + (!showVideos ? '' : 'header-videos')">
-      <h1 v-if="invitation" class="headline">{{ roomId }}</h1>
+    <header :class="'header '">
+      <h1 class="headline">{{ roomId }}</h1>
       <div class="logo">
         <img
           class="logo-an"
@@ -14,225 +14,47 @@
           alt="Telekneipe Logo aus"
         />
       </div>
-      <h1 v-if="invitation" class="headline">Telekneipe</h1>
+      <h1 class="headline">Telekneipe</h1>
     </header>
-    <div v-if="!showVideos" class="join-screen">
-      <h3 class="sub-headline">{{ joinTitle }}</h3>
+    <div class="join-screen">
+      <h3 class="sub-headline">Erstelle deine eigene Telekneipe</h3>
       <input v-model="roomId" type="text" name="room-id" class="text-input" />
-      <button class="button" @click="joinRoom">{{ joinButtonTitle }}</button>
-    </div>
-    <div :class="'controls ' + (showControls ? 'open' : 'close')">
-      <div class="controls-form">
-        <h1 v-if="$mq !== 'lg'" class="headline">{{ roomId }} Telekneipe</h1>
-        <h3 class="sub-headline">{{ joinTitle }}</h3>
-        <input v-model="roomId" type="text" name="room-id" class="text-input" />
-        <button class="button" @click="joinRoom">{{ joinButtonTitle }}</button>
-        <button class="button" @click="leaveRoom">
-          Nach hause torkeln
-        </button>
-        <button
-          v-show="videoLink"
-          v-clipboard="() => videoLink"
-          v-clipboard:success="linkCopied"
-          class="button video-link"
-        >
-          <transition name="tooltip"
-            ><span v-show="shareMessage" class="tooltip"
-              >Link kopiert!</span
-            ></transition
-          >
-
-          Teilen
-        </button>
-        <div class="link">
-          <nuxt-link to="thanks">Danke |</nuxt-link>
-          <a href="https://telefonkneipe.de/" target="_blank"
-            >Telefonkneipe |</a
-          >
-          <nuxt-link to="support">Unterstützen</nuxt-link>
-        </div>
-      </div>
-      <button class="button-control" @click="showControls = !showControls">
-        <span class="menu-string menu-string-1"></span>
-        <span class="menu-string menu-string-2"></span>
-        <span class="menu-string menu-string-3"></span>
-      </button>
-    </div>
-    <transition name="fade">
-      <div ref="videoContainer" class="video-container">
-        <vue-webrtc
-          v-if="loaded"
-          v-show="showVideos"
-          ref="video"
-          width="100%"
-          :socket-u-r-l="'https://telekneipe-server.classen.rocks/'"
-          :room-id="roomId"
-          :camera-height="videoHeight"
-          class="videos"
-          @opened-room="openedRoom"
-          @joined-room="joinedRoom"
-          @left-room="leftRoom"
-        >
-        </vue-webrtc>
-      </div>
-    </transition>
-    <audio
-      ref="soundBeer"
-      preload="true"
-      class="sound beer"
-      src="/sounds/beer.mp3"
-    ></audio>
-    <audio
-      ref="soundDoor"
-      preload="true"
-      class="sound door"
-      src="/sounds/door.mp3"
-    ></audio>
-    <div class="link copyright">
-      <a href="https://westwerk.ac" target="_blank"
-        >Beta © {{ year }} Alexander Classen - powered by westwerk</a
+      <nuxt-link class="button" :to="'room/' + encodeURI(roomId)"
+        >Kneipe eröffnen</nuxt-link
       >
-      <a href="https://www.markus-h.de/" target="_blank"> & handkemacht</a>
     </div>
+    <controls />
+    <copyright />
   </div>
 </template>
 
 <script>
-import { v4 as uuidv4 } from 'uuid'
 export default {
-  components: {},
+  components: {
+    Controls: () => import('@/components/Controls'),
+    Copyright: () => import('@/components/Copyright')
+  },
   data: () => ({
-    uuidv4,
-    loaded: false,
-    uuid: '0',
-    roomId: 'Jedermann`s',
-    showControls: false,
-    showVideos: false,
-    videoLink: '',
     videoHeight: 'auto',
-    ownVideo: '',
-    videoIds: [],
-    shareMessage: false,
-    loadedAudio: false,
-    playing: false
+    roomId: "Jedermann's"
   }),
-  computed: {
-    invitation() {
-      return (
-        typeof this.$route.query.roomId !== 'undefined' &&
-        this.$route.query.roomId !== ''
-      )
-    },
-    joinTitle() {
-      if (this.invitation) {
-        return (
-          'Du wurdest auf ein Bier in ' +
-          this.roomId +
-          ' Telekneipe eingeladen.'
-        )
-      } else return 'Erstelle deine Telekneipe'
-    },
-    joinButtonTitle() {
-      if (this.invitation) {
-        return 'An den Tisch setzen'
-      } else return 'Kneipe öffnen'
-    },
-
-    videos() {
-      if (typeof this.$refs.video !== 'undefined') {
-        if (typeof this.$refs.video.videoList !== 'undefined') {
-          return this.$refs.video.videoList.length || 0
-        } else {
-          return 0
-        }
-      } else {
-        return false
-      }
-    },
-    year() {
-      const date = new Date()
-      return date.getFullYear()
-    }
-  },
   mounted() {
-    this.uuid = uuidv4()
-    if (this.invitation) {
-      this.roomId = this.$route.query.roomId
-    }
-    this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio())
-    this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio())
-  },
-  methods: {
-    canPlayAudio() {
-      this.loadedAudio = true
-    },
-    isPlaying() {
-      this.playing = !this.playing
-    },
-    joinRoom() {
-      this.$refs.video.join()
-      this.showControls = false
-      this.videoLink =
-        window.location.origin + '?roomId=' + encodeURIComponent(this.roomId)
-    },
-    leaveRoom() {
-      this.$refs.video.leave()
-      this.showControls = true
-      this.showVideos = false
-    },
-    openedRoom(video) {},
-    joinedRoom(video) {
-      if (this.videos > 0) {
-        this.showVideos = true
-      }
-      this.$refs.video.videoList.map(($k) => {
-        this.videoIds.push($k.id)
-      })
-      if (this.loadedAudio === true) this.$refs.soundBeer.play()
-    },
-    leftRoom(video) {
-      if (this.loadedAudio === true) this.$refs.soundDoor.play()
-    },
-    linkCopied() {
-      this.shareMessage = true
-      window.setTimeout(() => {
-        this.shareMessage = false
-      }, 3000)
+    if (this.$route.query.roomId) {
+      this.$store.commit('setInvitation')
+      this.$store.commit('setRoomId', this.$route.query.roomId)
     }
   },
+  methods: {},
   /* ToDo load socket local */
   head() {
     return {
-      title: this.roomId + ' Telekneipe',
-      script: [
-        {
-          hid: 'socket.io',
-          src: '/socket.io.js',
-          defer: true,
-          // Changed after script load
-          callback: () => {
-            this.loaded = true
-          }
-        }
-      ]
+      title: this.roomId + ' Telekneipe'
     }
   }
 }
 </script>
 
 <style>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(/images/brickwall-pattern.jpg);
-
-  background-size: 100%, 60px;
-  background-repeat: no-repeat, repeat;
-  min-height: 100vh;
-}
 .join-screen {
   width: 100%;
   display: flex;
@@ -272,71 +94,6 @@ export default {
   visibility: hidden;
 }
 
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  width: 25vw;
-  justify-content: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 10;
-  align-items: center;
-  background: var(--color-background-light);
-  padding: var(--space-medium);
-  will-change: transform;
-  transition: transform var(--transition-default);
-}
-
-.controls .sub-headline {
-  width: 100%;
-}
-.controls.close {
-  transform: translateX(-100%);
-}
-.controls.open {
-  transform: translateX(0%);
-}
-.controls-form {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.controls-form h3 {
-  margin-right: auto;
-}
-.controls .text-input {
-  width: 100%;
-}
-.controls .button-control {
-  position: absolute;
-  top: var(--space-medium);
-  right: -45px;
-  background: none;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  outline: none;
-}
-.controls .link {
-  width: 100%;
-  position: fixed;
-  bottom: var(--space-medium);
-  left: var(--space-medium);
-}
-.controls .button-control .menu-string {
-  border: 2px solid var(--color-primary);
-  border-radius: 3px;
-  margin: 1.5px 0;
-  width: 30px;
-}
-
-.controls .video-link {
-  position: relative;
-  margin: var(--space-small);
-}
 .videos.video-list .video-item {
   background: transparent !important;
 }
@@ -429,12 +186,7 @@ export default {
     grid-gap: var(--space-small);
   }
 }
-.copyright {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  padding: var(--space-small);
-}
+
 @keyframes logo {
   0% {
     opacity: 0;

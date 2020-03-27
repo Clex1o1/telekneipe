@@ -16,22 +16,14 @@
       idea by
       <a href="https://www.markus-h.de/" target="_blank">Markus Handke.</a>
     </p>
-    <div class="link">
-      <a href="https://westwerk.ac" target="_blank"
-        >Beta © {{ year }} Alexander Classen - powered by westwerk</a
-      >
-      <a href="https://www.markus-h.de/" target="_blank"> & handkemacht</a>
-    </div>
+    <copyright />
   </div>
 </template>
 
 <script>
 export default {
-  computed: {
-    year() {
-      const date = new Date()
-      return date.getFullYear()
-    }
+  components: {
+    Copyright: () => import('@/components/Copyright')
   }
 }
 </script>
@@ -49,12 +41,6 @@ export default {
 }
 h1 {
   margin: var(--space-medium);
-}
-.link {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  padding: var(--space-small);
 }
 .link-back {
   position: fixed;

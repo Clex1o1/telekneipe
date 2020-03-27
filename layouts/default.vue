@@ -152,4 +152,16 @@ a:hover {
     --font-size-super-big: 2em;
   }
 }
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
+    url(/images/brickwall-pattern.jpg);
+
+  background-size: 100%, 60px;
+  background-repeat: no-repeat, repeat;
+  min-height: 100vh;
+}
 </style>
