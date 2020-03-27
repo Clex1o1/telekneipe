@@ -44,7 +44,13 @@
 
           Teilen
         </button>
-        <nuxt-link to="thanks" class="link">Danke</nuxt-link>
+        <div class="link">
+          <nuxt-link to="thanks">Danke |</nuxt-link>
+          <a href="https://telefonkneipe.de/" target="_blank"
+            >Telefonkneipe |</a
+          >
+          <nuxt-link to="support">Unterstützen</nuxt-link>
+        </div>
       </div>
       <button class="button-control" @click="showControls = !showControls">
         <span class="menu-string menu-string-1"></span>
@@ -59,6 +65,7 @@
           v-show="showVideos"
           ref="video"
           width="100%"
+          :socket-u-r-l="'https://telekneipe-server.classen.rocks/'"
           :room-id="roomId"
           :camera-height="videoHeight"
           class="videos"
@@ -69,11 +76,24 @@
         </vue-webrtc>
       </div>
     </transition>
-    <audio ref="soundBeer" class="sound beer" src="/sounds/beer.mp3"></audio>
-    <audio ref="soundDoor" class="sound door" src="/sounds/door.mp3"></audio>
-    <a href="https://westwerk.ac" target="_blank" class="copyright link"
-      >Beta © {{ year }} Alexander Classen - powered by westwerk</a
-    >
+    <audio
+      ref="soundBeer"
+      preload="true"
+      class="sound beer"
+      src="/sounds/beer.mp3"
+    ></audio>
+    <audio
+      ref="soundDoor"
+      preload="true"
+      class="sound door"
+      src="/sounds/door.mp3"
+    ></audio>
+    <div class="link copyright">
+      <a href="https://westwerk.ac" target="_blank"
+        >Beta © {{ year }} Alexander Classen - powered by westwerk</a
+      >
+      <a href="https://www.markus-h.de/" target="_blank"> & handkemacht</a>
+    </div>
   </div>
 </template>
 
@@ -92,7 +112,9 @@ export default {
     videoHeight: 'auto',
     ownVideo: '',
     videoIds: [],
-    shareMessage: false
+    shareMessage: false,
+    loadedAudio: false,
+    playing: false
   }),
   computed: {
     invitation() {
@@ -126,6 +148,10 @@ export default {
       } else {
         return false
       }
+    },
+    year() {
+      const date = new Date()
+      return date.getFullYear()
     }
   },
   mounted() {
@@ -133,8 +159,16 @@ export default {
     if (this.invitation) {
       this.roomId = this.$route.query.roomId
     }
+    this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio())
+    this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio())
   },
   methods: {
+    canPlayAudio() {
+      this.loadedAudio = true
+    },
+    isPlaying() {
+      this.playing = !this.playing
+    },
     joinRoom() {
       this.$refs.video.join()
       this.showControls = false
@@ -144,6 +178,7 @@ export default {
     leaveRoom() {
       this.$refs.video.leave()
       this.showControls = true
+      this.showVideos = false
     },
     openedRoom(video) {},
     joinedRoom(video) {
@@ -153,10 +188,10 @@ export default {
       this.$refs.video.videoList.map(($k) => {
         this.videoIds.push($k.id)
       })
-      this.$refs.soundBeer.play()
+      if (this.loadedAudio === true) this.$refs.soundBeer.play()
     },
     leftRoom(video) {
-      this.$refs.soundDoor.play()
+      if (this.loadedAudio === true) this.$refs.soundDoor.play()
     },
     linkCopied() {
       this.shareMessage = true
@@ -172,7 +207,7 @@ export default {
       script: [
         {
           hid: 'socket.io',
-          src: '/socket.io.min.js',
+          src: '/socket.io.js',
           defer: true,
           // Changed after script load
           callback: () => {
@@ -191,9 +226,11 @@ export default {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, 0) 100%),
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
     url(/images/brickwall-pattern.jpg);
-  background-size: 60px;
+
+  background-size: 100%, 60px;
+  background-repeat: no-repeat, repeat;
   min-height: 100vh;
 }
 .join-screen {
@@ -394,8 +431,9 @@ export default {
 }
 .copyright {
   position: fixed;
-  bottom: var(--space-small);
-  right: var(--space-small);
+  bottom: 0;
+  right: 0;
+  padding: var(--space-small);
 }
 @keyframes logo {
   0% {
