@@ -54,6 +54,10 @@
   --color-text-alternative: #000;
   --color-background: #000;
   --color-background-light: #0f0f0f;
+  --color-yellow: #ffe000;
+  --color-red: #ff4b35;
+  --color-blue: #0b51ff;
+  --color-white: #fff;
 
   --font-size-base: 16px;
   --font-size-small: 0.8em;

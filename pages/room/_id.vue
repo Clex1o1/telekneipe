@@ -9,7 +9,7 @@
           :socket-u-r-l="'https://telekneipe-server.classen.rocks/'"
           :room-id="roomId"
           :camera-height="videoHeight"
-          class="videos"
+          :class="'videos ' + videoCountClass"
           @opened-room="openedRoom"
           @joined-room="joinedRoom"
           @left-room="leftRoom"
@@ -29,30 +29,75 @@
       class="sound door"
       src="/sounds/door.mp3"
     ></audio>
+    <controls
+      :should-show-controls="showingControls || showingControlsBlocking"
+      @blockHiding="showingControlsBlocking = true"
+      @hide="showingControlsBlocking = false"
+      @toggleSound="toggleSound"
+      @leaveGoBack="leaveGoBack"
+      @leaveGotoHome="leaveGotoHome"
+    />
   </div>
 </template>
 
 <script>
 import * as io from 'socket.io-client'
 window.io = io
+
 export default {
+  components: {
+    Controls: () => import('@/components/controls/Controls')
+  },
   data() {
     return {
       roomId: this.$route.params.id,
-      loaded: false,
       videoHeight: 'auto',
       loadedAudio: false,
       playing: false,
-      showVideos: false
+      showVideos: false,
+      showingControls: false,
+      showingControlsBlocking: false
+    }
+  },
+  computed: {
+    localVideoId() {
+      return this.$refs.video.localVideo.id
+    },
+    videos() {
+      if (typeof this.$refs.video !== 'undefined')
+        return this.$refs.video.$refs.videos
+      else return 0
+    },
+    videoCountClass() {
+      if (this.videos.length > 2) {
+        return 'flex-1-1-50'
+      } else {
+        return 'flex-1-1-100'
+      }
     }
   },
   mounted() {
-    this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio())
-    this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio())
     if (this.$store.getters.getInvitation) {
-    } else {
+    } else if (this.roomId) {
       this.joinRoom()
+    } else {
+      this.$router.push('/')
     }
+    this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio)
+    this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio)
+    document.addEventListener('mousemove', this.showControls)
+  },
+  updated() {
+    if (typeof this.$refs.video.$refs.videos !== 'undefined') {
+      this.$refs.video.$refs.videos.map(($v) => {
+        $v.controls = false
+      })
+    }
+  },
+  beforeDestroy() {
+    this.$refs.soundBeer.removeEventListener('canplay', this.canPlayAudio)
+    this.$refs.soundDoor.removeEventListener('canplay', this.canPlayAudio)
+    document.removeEventListener('mousemove', this.showControls)
   },
   methods: {
     canPlayAudio() {
@@ -70,8 +115,6 @@ export default {
     },
     leaveRoom() {
       this.$refs.video.leave()
-      this.showControls = true
-      this.showVideos = false
     },
     openedRoom(video) {},
     joinedRoom(video) {
@@ -80,6 +123,25 @@ export default {
     },
     leftRoom(video) {
       if (this.loadedAudio === true) this.$refs.soundDoor.play()
+    },
+    showControls() {
+      setTimeout(() => {
+        this.showingControls = false
+      }, 5000)
+      this.showingControls = true
+    },
+    toggleSound(sound) {
+      this.videos.map((item) => {
+        if (item.id !== this.localVideoId) item.muted = !sound
+      })
+    },
+    leaveGoBack() {
+      this.leaveRoom()
+      this.$router.go(-1)
+    },
+    leaveGotoHome() {
+      this.leaveRoom()
+      this.$router.push('/')
     }
   },
   /* ToDo load socket local */
@@ -87,6 +149,10 @@ export default {
     return {
       title: this.roomId + ' Telekneipe'
     }
+  },
+  beforeRouteLeave(to, from, next) {
+    this.leaveRoom()
+    next()
   }
 }
 </script>
@@ -94,27 +160,11 @@ export default {
 <style scoped>
 .video-container {
   width: 100%;
+  min-height: 100vh;
+  display: flex;
 }
-.videos.video-list {
-  background: transparent !important;
-  padding: var(--space-medium);
-  display: grid;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  display: grid;
-  grid-gap: 4em 2em;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-}
-
 .sound {
   visibility: hidden;
-}
-
-.videos.video-list .video-item {
-  background: transparent !important;
-}
-.videos.video-list .video-item video {
-  max-width: 100%;
 }
 
 .fade-enter,
@@ -127,10 +177,27 @@ export default {
   will-change: opacity;
   transition: opacity var(--transition-default);
 }
+</style>
+<style>
+/* unscoped styles for vue-webrtc */
+.videos.video-list {
+  background: transparent !important;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.videos.video-list .video-item {
+  background: transparent !important;
+  object-fit: cover;
+}
+.videos.video-list .video-item video {
+  max-width: 100%;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+}
 @media screen and (max-width: 992px) {
   .videos.video-list {
-    grid-template-columns: repeat(auto-fit, 136px);
-    grid-gap: var(--space-small);
   }
 }
 </style>
