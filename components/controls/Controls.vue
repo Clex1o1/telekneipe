@@ -21,15 +21,6 @@
         @hide="$emit('hide')"
       />
       <share @blockHiding="$emit('blockHiding')" @hide="$emit('hide')" />
-      <mic
-        @toggleMic="
-          (mic) => {
-            $emit('toggleMic', mic)
-          }
-        "
-        @blockHiding="$emit('blockHiding')"
-        @hide="$emit('hide')"
-      />
     </div>
   </transition>
 </template>
@@ -37,14 +28,12 @@
 import Leave from './Leave'
 import Sound from './Sound'
 import Home from './Home'
-import Mic from './Mic'
 import Share from './Share'
 export default {
   components: {
     Leave,
     Home,
     Sound,
-    Mic,
     Share
   },
   props: {
