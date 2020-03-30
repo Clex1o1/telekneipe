@@ -3,11 +3,20 @@
     <v-header :room-id="roomId"></v-header>
     <div class="join-screen">
       <h3 class="sub-headline">Erstelle deine eigene Telekneipe</h3>
-      <input v-model="roomId" type="text" name="room-id" class="text-input" />
+      <fieldset>
+        <label for="room-id">Name:</label
+        ><input
+          v-model="roomId"
+          type="text"
+          name="room-id"
+          class="text-input"
+        />
+      </fieldset>
       <nuxt-link class="button" :to="'room/' + encodeURI(roomId)"
         >Kneipe eröffnen</nuxt-link
       >
     </div>
+    <v-footer />
   </div>
 </template>
 
@@ -15,7 +24,8 @@
 import VHeader from '@/components/VHeader'
 export default {
   components: {
-    VHeader
+    VHeader,
+    VFooter: () => import('@/components/VFooter')
   },
   data: () => ({
     videoHeight: 'auto',
@@ -52,6 +62,8 @@ export default {
 .join-screen .text-input {
   font-size: var(--font-size-medium);
   font-weight: bold;
-  width: 300px;
+}
+.join-screen fieldset {
+  display: flex;
 }
 </style>

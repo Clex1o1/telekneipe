@@ -118,6 +118,14 @@ p {
   box-shadow: 0 3px 9px 0 rgba(0, 255, 0, 0.27);
 }
 
+fieldset {
+  border: none;
+}
+label {
+  color: var(--color-text);
+  padding: var(--space-small);
+}
+
 input {
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
