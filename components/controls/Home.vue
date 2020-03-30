@@ -16,6 +16,7 @@ export default {
 </script>
 <style scoped>
 .icon.home {
+  cursor: pointer;
   position: absolute;
   left: var(--space-medium);
   top: var(--space-medium);

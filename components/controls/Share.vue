@@ -56,6 +56,7 @@ export default {
 </script>
 <style scoped>
 .icon.share {
+  cursor: pointer;
   position: absolute;
   bottom: var(--space-medium);
   right: var(--space-medium);
