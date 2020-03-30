@@ -1,13 +1,20 @@
 export const state = () => ({
   videoLink: null,
   invitation: false,
-  roomId: null
+  roomId: null,
+  joinded: false
 })
 export const mutations = {
   setInvitation(state) {
     state.invitation = true
   },
   resetInvitation(state) {
+    state.invitation = false
+  },
+  setJoined(state) {
+    state.invitation = true
+  },
+  resetJoined(state) {
     state.invitation = false
   },
   setRoomId(state, payload) {
@@ -26,5 +33,8 @@ export const getters = {
   },
   getVideoLink(state) {
     return state.videoLink
+  },
+  getJoined(state) {
+    return state.joined
   }
 }

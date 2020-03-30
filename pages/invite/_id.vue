@@ -1,6 +1,12 @@
 <template>
   <div class="container">
-    <v-header></v-header>
+    <v-header :room-id="roomId"></v-header>
+    <div class="invitation">
+      <h3>Du wurdest in {{ roomId }} Telekneipe eingeladen.</h3>
+      <nuxt-link class="button" :to="'/room/' + encodeURI(roomId)"
+        >Kneipe beitreten</nuxt-link
+      >
+    </div>
   </div>
 </template>
 
@@ -15,8 +21,14 @@ export default {
       roomId: this.$route.params.id
     }
   },
+  created() {
+    if (this.roomId) {
+      this.$store.commit('setRoomId', this.roomId)
+    } else {
+      this.$router.push('/')
+    }
+  },
   mounted() {},
-  /* ToDo load socket local */
   head() {
     return {
       title: this.roomId + ' Telekneipe'
@@ -25,100 +37,17 @@ export default {
 }
 </script>
 
-<style>
-.headline {
+<style scoped>
+.invitation {
   width: 100%;
-  text-align: center;
-  margin: var(--space-medium) 0;
-}
-.header {
+  max-width: 86%;
   display: flex;
-  width: 100%;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: var(--space-small) 0;
-  flex-wrap: wrap;
+  padding: var(--space-small);
 }
-.header .headline {
-  width: auto;
-  margin: 0 var(--space-small);
-}
-.header-videos {
-  position: absolute;
-  top: 0;
-}
-.header-videos .logo {
-  height: 5vw;
-  width: 5vw;
-  min-width: 50px;
-  min-height: 50px;
-}
-.logo {
-  height: 20vw;
-  width: 20vw;
-  min-width: 150px;
-  min-height: 150px;
-  position: relative;
-}
-.logo .logo-aus {
-  animation: logo 10s infinite ease;
-}
-.logo img {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  will-change: opacity;
-  transition: opacity var(--transition-default);
-}
-@media screen and (max-width: 992px) {
-  .header .headline {
-    display: none;
-  }
-  .videos.video-list {
-    grid-template-columns: repeat(auto-fit, 136px);
-    grid-gap: var(--space-small);
-  }
-}
-
-@keyframes logo {
-  0% {
-    opacity: 0;
-  }
-  1% {
-    opacity: 1;
-  }
-  2% {
-    opacity: 0;
-  }
-  10% {
-    opacity: 0;
-  }
-  11% {
-    opacity: 1;
-  }
-  12% {
-    opacity: 0;
-  }
-  30% {
-    opacity: 0;
-  }
-  31% {
-    opacity: 1;
-  }
-  32% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0;
-  }
+.invitation .button {
+  margin: var(--space-medium);
 }
 </style>

@@ -56,32 +56,36 @@ export default {
       playing: false,
       showVideos: false,
       showingControls: false,
-      showingControlsBlocking: false
+      showingControlsBlocking: false,
+      videos: []
     }
   },
   computed: {
+    roomRunning() {
+      return typeof this.$refs.video !== 'undefined'
+    },
     localVideoId() {
       return this.$refs.video.localVideo.id
     },
-    videos() {
-      if (typeof this.$refs.video !== 'undefined')
-        return this.$refs.video.$refs.videos
-      else return 0
-    },
     videoCountClass() {
-      if (this.videos.length > 2) {
-        return 'flex-1-1-50'
+      if (this.videos.length <= 1) {
+        return 'grid-100'
+      } else if (this.videos.length > 2) {
+        return 'grid-50'
       } else {
-        return 'flex-1-1-100'
+        return 'grid-100'
       }
     }
   },
-  mounted() {
-    if (this.$store.getters.getInvitation) {
-    } else if (this.roomId) {
-      this.joinRoom()
+  created() {
+    if (this.roomId) {
     } else {
       this.$router.push('/')
+    }
+  },
+  mounted() {
+    if (this.roomId) {
+      this.joinRoom()
     }
     this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio)
     this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio)
@@ -120,6 +124,8 @@ export default {
     joinedRoom(video) {
       this.showVideos = true
       if (this.loadedAudio === true) this.$refs.soundBeer.play()
+      if (typeof this.$refs.video.$refs.videos !== 'undefined')
+        this.videos = this.$refs.video.$refs.videos
     },
     leftRoom(video) {
       if (this.loadedAudio === true) this.$refs.soundDoor.play()
@@ -131,17 +137,23 @@ export default {
       this.showingControls = true
     },
     toggleSound(sound) {
-      this.videos.map((item) => {
-        if (item.id !== this.localVideoId) item.muted = !sound
-      })
+      if (this.videos.length) {
+        this.videos.map((item) => {
+          if (item.id !== this.localVideoId) item.muted = !sound
+        })
+      }
     },
     leaveGoBack() {
-      this.leaveRoom()
-      this.$router.go(-1)
+      if (this.roomRunning) {
+        this.leaveRoom()
+        this.$router.go(-1)
+      }
     },
     leaveGotoHome() {
-      this.leaveRoom()
-      this.$router.push('/')
+      if (this.roomRunning) {
+        this.leaveRoom()
+        this.$router.push('/')
+      }
     }
   },
   /* ToDo load socket local */
@@ -151,7 +163,9 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    this.leaveRoom()
+    if (this.roomRunning) {
+      this.leaveRoom()
+    }
     next()
   }
 }
@@ -182,9 +196,9 @@ export default {
 /* unscoped styles for vue-webrtc */
 .videos.video-list {
   background: transparent !important;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
 }
 
 .videos.video-list .video-item {
@@ -195,9 +209,26 @@ export default {
   max-width: 100%;
   -webkit-border-radius: 1px;
   border-radius: 1px;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  object-position: center center;
 }
-@media screen and (max-width: 992px) {
+@media screen and (max-width: 992px) and (orientation: portrait) {
   .videos.video-list {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  }
+  .videos.video-list.grid-50 {
+    grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
+  }
+}
+@media screen and (max-width: 992px) and (orientation: landscape) {
+  .videos.video-list {
+    grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
+  }
+  .videos.video-list.grid-50 {
+    grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
   }
 }
 </style>
