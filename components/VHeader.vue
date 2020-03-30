@@ -23,7 +23,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .header {
   display: flex;
   width: 100%;
@@ -67,52 +67,9 @@ export default {
   height: 100%;
 }
 
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  will-change: opacity;
-  transition: opacity var(--transition-default);
-}
-.tooltip {
-  position: absolute;
-  font-size: 0.8em;
-  background: var(--color-text);
-  padding: 2px 4px;
-  left: 50%;
-  width: 100%;
-  border-radius: 3px;
-  box-shadow: 0 3px 9px 0 rgba(0, 0, 0, 0.27);
-  transform: translate(-50%, -100%);
-}
-.tooltip-enter,
-.tooltip-leave-to {
-  opacity: 0;
-  transform: translate(-50%, 0%);
-}
-
-.tooltip-enter-active,
-.tooltip-leave-active {
-  will-change: opacity, transform;
-  transition: opacity var(--transition-default),
-    transform var(--transition-default);
-}
 @media screen and (max-width: 992px) {
   .header .headline {
     display: none;
-  }
-  .controls {
-    width: 100vw;
-  }
-  .controls.open .button-control {
-    transform: translate(-200%, 0);
-  }
-  .videos.video-list {
-    grid-template-columns: repeat(auto-fit, 136px);
-    grid-gap: var(--space-small);
   }
 }
 
