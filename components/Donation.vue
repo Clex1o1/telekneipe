@@ -1,5 +1,6 @@
 <template>
   <div v-if="emailAdresses.length" class="donation">
+    <label>Suchen:</label>
     <v-select
       v-model="selectedMail"
       class="select-box"
@@ -48,8 +49,8 @@ export default {
     selectedMail: '',
     emailAdresses: [
       /* { email: 'alexander@classen.rocks', name: 'Alexander Classen' } */
-      { email: 'alexander@classen.rocks', name: 'Alexander Classen' },
-      { email: 'alexander@classen.rocks222', name: 'Alexander Classen 2' }
+      // { email: 'alexander@classen.rocks', name: 'Alexander Classen' },
+      // { email: 'alexander@classen.rocks222', name: 'Alexander Classen 2' }
     ],
     OpenIndicator: {
       render: (createElement) =>
@@ -63,11 +64,24 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
+.donation {
+  width: 80%;
+}
 .select-box {
   color: var(--color-text);
   position: relative;
 }
+
+.donation-button {
+  border: none;
+}
+.paypal-form {
+  display: flex;
+  justify-content: center;
+}
+</style>
+<style>
 .vs__selected-options {
   position: relative;
 }
@@ -113,12 +127,5 @@ ul.vs__dropdown-menu li {
 }
 .vs__dropdown-option--selected {
   color: var(--color-primary);
-}
-.donation-button {
-  border: none;
-}
-.paypal-form {
-  display: flex;
-  justify-content: center;
 }
 </style>
