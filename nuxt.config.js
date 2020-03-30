@@ -30,7 +30,8 @@ export default {
   plugins: [
     { src: '~/plugins/vue-webrtc.js', ssr: false },
     { src: '~/plugins/vue-clipboard.js' },
-    { src: '~/plugins/vue-mq.js' }
+    { src: '~/plugins/vue-mq.js' },
+    { src: '~/plugins/vue-select.js' }
   ],
   /*
    ** Nuxt.js dev-modules
