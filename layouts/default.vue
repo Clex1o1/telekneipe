@@ -54,6 +54,10 @@
   --color-text-alternative: #000;
   --color-background: #000;
   --color-background-light: #0f0f0f;
+  --color-yellow: #ffe000;
+  --color-red: #ff4b35;
+  --color-blue: #0b51ff;
+  --color-white: #fff;
 
   --font-size-base: 16px;
   --font-size-small: 0.8em;
@@ -114,6 +118,14 @@ p {
   box-shadow: 0 3px 9px 0 rgba(0, 255, 0, 0.27);
 }
 
+fieldset {
+  border: none;
+}
+label {
+  color: var(--color-text);
+  padding: var(--space-small);
+}
+
 input {
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
@@ -151,5 +163,17 @@ a:hover {
     --font-size-big: 1.5em;
     --font-size-super-big: 2em;
   }
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
+    url(/images/brickwall-pattern.jpg);
+
+  background-size: 100%, 60px;
+  background-repeat: no-repeat, repeat;
+  min-height: 100vh;
 }
 </style>

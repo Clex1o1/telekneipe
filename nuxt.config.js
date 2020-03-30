@@ -1,5 +1,5 @@
 export default {
-  mode: 'spa',
+  mode: 'universal',
   /*
    ** Headers of the page
    */
@@ -30,7 +30,8 @@ export default {
   plugins: [
     { src: '~/plugins/vue-webrtc.js', ssr: false },
     { src: '~/plugins/vue-clipboard.js' },
-    { src: '~/plugins/vue-mq.js' }
+    { src: '~/plugins/vue-mq.js' },
+    { src: '~/plugins/vue-select.js' }
   ],
   /*
    ** Nuxt.js dev-modules
@@ -52,4 +53,7 @@ export default {
      */
     extend(config, ctx) {}
   }
+  // generate: {
+  //   routes: ['/room', '/invite']
+  // }
 }
