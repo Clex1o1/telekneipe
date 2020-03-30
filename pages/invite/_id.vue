@@ -11,7 +11,9 @@ export default {
     VHeader
   },
   data() {
-    return {}
+    return {
+      roomId: this.$route.params.id
+    }
   },
   mounted() {},
   /* ToDo load socket local */
