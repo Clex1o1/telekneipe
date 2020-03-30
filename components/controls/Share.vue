@@ -57,9 +57,8 @@ export default {
 <style scoped>
 .icon.share {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   bottom: var(--space-medium);
+  right: var(--space-medium);
 }
 .copy-message {
   color: var(--color-text-alternative);
@@ -68,15 +67,15 @@ export default {
   padding: calc(var(--space-small) / 2) var(--space-small);
   font-size: var(--font-size-small);
   position: absolute;
-  left: 50%;
+  right: 0;
   box-sizing: content-box;
-  transform: translate(-50%, -100%);
+  transform: translate(0, -100%);
   top: calc(var(--space-small) / -1);
 }
 .fadeUp-enter,
 .fadeUp-leave-to {
   opacity: 0;
-  transform: translate(-50%, 0);
+  transform: translate(0, 0);
 }
 
 .fadeUp-enter-active,
