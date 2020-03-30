@@ -4,12 +4,12 @@
     <div class="logo">
       <img
         class="logo-an"
-        src="images/Telekneipe-Logo-AN.png"
+        src="/images/Telekneipe-Logo-AN.png"
         alt="Telekneipe Logo an"
       />
       <img
         class="logo-aus"
-        src="images/Telekneipe-Logo-AUS.png"
+        src="/images/Telekneipe-Logo-AUS.png"
         alt="Telekneipe Logo aus"
       />
     </div>
