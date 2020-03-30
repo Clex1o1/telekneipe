@@ -50,6 +50,7 @@ export default {
 <style>
 .join-screen {
   width: 100%;
+  max-width: 86%;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -62,8 +63,11 @@ export default {
 .join-screen .text-input {
   font-size: var(--font-size-medium);
   font-weight: bold;
+  width: 100%;
 }
 .join-screen fieldset {
   display: flex;
+  width: 100%;
+  max-width: 320px;
 }
 </style>
