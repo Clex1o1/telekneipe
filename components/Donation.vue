@@ -1,6 +1,5 @@
 <template>
   <div v-if="emailAdresses.length" class="donation">
-    <h3>Unterstütze deine Kneipe</h3>
     <v-select
       v-model="selectedMail"
       class="select-box"

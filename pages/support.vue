@@ -1,18 +1,24 @@
 <template>
   <div class="container">
     <nuxt-link to="/" class="link-back">Zurück</nuxt-link>
-    <h1>Eure Unterstützung!</h1>
+    <h1>Unterstütze deine lieblings Kniepe!</h1>
+    <donation />
     <p>
       Sendet vorschläge welche Kneipe, Bar, Café oder Einzelhändler wir
       untersützen sollen. Oder bist du betroffen? Setze dich mit uns in Kontakt
       und wir veröffentlichen dein Paypal-Spendenkonto. Einfach eine kurze Mail
       an: <a href="mailto:alexander@classen.rocks">alexander@classen.rocks</a>
     </p>
+    <copyright />
   </div>
 </template>
 
 <script>
 export default {
+  components: {
+    Donation: () => import('@/components/Donation'),
+    Copyright: () => import('@/components/Copyright')
+  },
   computed: {
     year() {
       const date = new Date()
