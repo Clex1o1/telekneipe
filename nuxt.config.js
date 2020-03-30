@@ -1,5 +1,5 @@
 export default {
-  mode: 'spa',
+  mode: 'universal',
   /*
    ** Headers of the page
    */
@@ -53,4 +53,7 @@ export default {
      */
     extend(config, ctx) {}
   }
+  // generate: {
+  //   routes: ['/room', '/invite']
+  // }
 }
