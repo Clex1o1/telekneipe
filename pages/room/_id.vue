@@ -42,7 +42,9 @@
 
 <script>
 import * as io from 'socket.io-client'
-window.io = io
+if (process.client) {
+  window.io = io
+}
 
 export default {
   components: {
