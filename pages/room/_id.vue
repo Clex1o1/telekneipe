@@ -70,10 +70,12 @@ export default {
       return this.$refs.video.localVideo.id
     },
     videoCountClass() {
-      if (this.videos.length <= 1) {
-        return 'grid-100'
+      if (this.videos.length > 8) {
+        return 'grid-50-100 '
       } else if (this.videos.length > 2) {
         return 'grid-50'
+      } else if (this.videos.length <= 1) {
+        return 'grid-100'
       } else {
         return 'grid-100'
       }
@@ -220,10 +222,14 @@ export default {
 @media screen and (max-width: 992px) and (orientation: portrait) {
   .videos.video-list {
     grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
-    max-height: 100%;
+    max-height: 100vh;
   }
   .videos.video-list.grid-50 {
     grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
+  }
+  .videos.video-list.grid-50-100 {
+    grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
+    max-height: 100%;
   }
 }
 @media screen and (max-width: 992px) and (orientation: landscape) {
