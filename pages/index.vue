@@ -10,6 +10,7 @@
           type="text"
           name="room-id"
           class="text-input"
+          maxlength="50"
         />
       </fieldset>
       <nuxt-link class="button" :to="'room/' + encodeURI(roomId)"

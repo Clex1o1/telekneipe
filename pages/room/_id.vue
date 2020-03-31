@@ -81,6 +81,7 @@ export default {
   },
   created() {
     if (this.roomId) {
+      this.$store.commit('setRoomId', this.roomId)
     } else {
       this.$router.push('/')
     }
@@ -158,7 +159,6 @@ export default {
       }
     }
   },
-  /* ToDo load socket local */
   head() {
     return {
       title: this.roomId + ' Telekneipe'
@@ -220,6 +220,7 @@ export default {
 @media screen and (max-width: 992px) and (orientation: portrait) {
   .videos.video-list {
     grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    max-height: 100%;
   }
   .videos.video-list.grid-50 {
     grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
