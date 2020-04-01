@@ -72,5 +72,6 @@ export default {
   display: flex;
   width: 100%;
   max-width: 320px;
+  align-items: baseline;
 }
 </style>

@@ -26,7 +26,8 @@ export default {
   computed: {
     shareData() {
       return {
-        url: window.location.href,
+        url:
+          window.location.origin + '/invite/' + this.$store.getters.getRoomId,
         text:
           'Komm mit in ' +
           this.$store.getters.getRoomId +
@@ -43,7 +44,9 @@ export default {
           this.$emit('shareSuccess')
         })
       } else {
-        this.$clipboard(window.location.href)
+        this.$clipboard(
+          window.location.origin + '/invite/' + this.$store.getters.getRoomId
+        )
         this.linkCopied = true
         setTimeout(() => {
           this.linkCopied = false

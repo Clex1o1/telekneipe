@@ -119,4 +119,9 @@ p {
   top: var(--space-medium);
   left: var(--space-medium);
 }
+@media screen and (max-width: 992px) {
+  .content {
+    max-width: 100%;
+  }
+}
 </style>
