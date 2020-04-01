@@ -2,14 +2,15 @@
   <div class="container">
     <nuxt-link to="/" class="link-back">Zurück</nuxt-link>
     <div class="content">
-      <h1>Unterstütze deine lieblings Kniepe!</h1>
+      <h1>Unterstütze deine Lieblingskneipe!</h1>
       <donation />
       <p>
-        Sendet vorschläge welche Kneipe, Bar, Café oder Einzelhändler wir
-        untersützen sollen. Oder bist du betroffen? Setze dich mit uns in
-        Kontakt und wir veröffentlichen dein Paypal-Spendenkonto. Einfach eine
-        kurze Mail an:
-        <a href="mailto:alexander@classen.rocks">alexander@classen.rocks</a>
+        Unterstütze deine Lieblingskneipe! Sendet Vorschläge welche Kneipe, Bar
+        oder welches Café ihr unterstützen wollt. Bist du selber Gastronom und
+        hast schon eine Hilfsmöglichkeit eingerichtet? Setze dich mit uns in
+        Kontakt und wir veröffentlichen dein Paypal-Spendenkonto bzw. den Link
+        zu deiner Aktion. Einfach eine kurze Mail an:
+        <a href="mailto:alex@telefonkneip.de">alex@telefonkneip.de</a>
       </p>
       <p>
         Support us on
@@ -67,5 +68,10 @@ h1 {
 }
 .icon {
   width: 24px;
+}
+@media screen and (max-width: 992px) {
+  .content {
+    max-width: 100%;
+  }
 }
 </style>

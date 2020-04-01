@@ -15,7 +15,7 @@
         for his Vue implementation. Design by
         <a href="https://bandeins.de/" target="_blank">Max Müsgens</a>. Concept
         & idea by
-        <a href="https://www.markus-h.de/" target="_blank">Markus Handke.</a>
+        <a href="https://handkemacht.com/" target="_blank">Markus Handke.</a>
       </p>
     </div>
     <copyright />
@@ -52,5 +52,10 @@ h1 {
   position: fixed;
   top: var(--space-medium);
   left: var(--space-medium);
+}
+@media screen and (max-width: 992px) {
+  .content {
+    max-width: 100%;
+  }
 }
 </style>

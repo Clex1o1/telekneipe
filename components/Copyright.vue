@@ -3,7 +3,7 @@
     <a href="https://westwerk.ac" target="_blank"
       >Beta © {{ year }} Alexander Classen - powered by westwerk</a
     >
-    <a href="https://www.markus-h.de/" target="_blank"> & handkemacht</a>
+    <a href="https://handkemacht.com/" target="_blank"> & handkemacht</a>
   </div>
 </template>
 <script>
