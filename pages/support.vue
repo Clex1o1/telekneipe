@@ -10,7 +10,7 @@
         hast schon eine Hilfsmöglichkeit eingerichtet? Setze dich mit uns in
         Kontakt und wir veröffentlichen dein Paypal-Spendenkonto bzw. den Link
         zu deiner Aktion. Einfach eine kurze Mail an:
-        <a rel="noreferrer" href="mailto:alex@telefonkneip.de"
+        <a rel="noreferrer" href="mailto:alex@telefonkneipe.de"
           >alex@telefonkneip.de</a
         >
       </p>
