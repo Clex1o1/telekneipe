@@ -49,7 +49,7 @@ export default {
     selectedMail: '',
     emailAdresses: [
       /* { email: 'alexander@classen.rocks', name: 'Alexander Classen' } */
-      // { email: 'alexander@classen.rocks', name: 'Alexander Classen' },
+      { email: 'rettedeinhoteleuropa@gmx.de', name: 'Hotel Europa (Aachen)' }
       // { email: 'alexander@classen.rocks222', name: 'Alexander Classen 2' }
     ],
     OpenIndicator: {
