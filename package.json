@@ -12,6 +12,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
   "dependencies": {
+    "express": "^4.17.1",
     "nuxt": "^2.0.0",
     "nuxt-start": "^2.12.1",
     "socket.io-client": "^2.3.0",
@@ -19,10 +20,7 @@
     "v-clipboard": "^2.2.2",
     "vue-mq": "^1.0.1",
     "vue-select": "^3.9.4",
-    "vue-webrtc": "^1.2.0",
-    "cross-env": "^5.2.0",
-    "express": "^4.16.4",
-    "regenerator-runtime": "^0.12.1"
+    "vue-webrtc": "^1.2.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",
