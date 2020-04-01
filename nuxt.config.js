@@ -48,10 +48,6 @@ export default {
    ** Build configuration
    */
   build: {
-    babel: {
-      presets: ['@nuxt/babel-preset-app'],
-      plugins: ['@babel/plugin-transform-runtime']
-    },
     /*
      ** You can extend webpack config here
      */
