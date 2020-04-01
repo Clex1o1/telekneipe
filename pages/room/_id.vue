@@ -16,6 +16,11 @@
         >
         </vue-webrtc>
       </transition>
+      <action-button
+        v-for="videoItem in videoObjects"
+        :key="videoItem.id"
+        @sendAction="sendAction"
+      />
     </div>
     <audio
       ref="soundBeer"
@@ -48,7 +53,8 @@ if (process.client) {
 
 export default {
   components: {
-    Controls: () => import('@/components/controls/Controls')
+    Controls: () => import('@/components/controls/Controls'),
+    ActionButton: () => import('@/components/action-button')
   },
   data() {
     return {
@@ -59,7 +65,8 @@ export default {
       showVideos: false,
       showingControls: false,
       showingControlsBlocking: false,
-      videos: []
+      videos: [],
+      videoObjects: {}
     }
   },
   computed: {
@@ -95,6 +102,7 @@ export default {
     this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio)
     this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio)
     document.addEventListener('mousemove', this.showControls)
+    this.$refs.video.rtcmConnection.onmessage(this.handleAction)
   },
   updated() {
     if (typeof this.$refs.video.$refs.videos !== 'undefined') {
@@ -131,6 +139,8 @@ export default {
       if (this.loadedAudio === true) this.$refs.soundBeer.play()
       if (typeof this.$refs.video.$refs.videos !== 'undefined')
         this.videos = this.$refs.video.$refs.videos
+      if (typeof this.$refs.video.videoList !== 'undefined')
+        this.videoObjects = this.$refs.video.videoList
     },
     leftRoom(video) {
       if (this.loadedAudio === true) this.$refs.soundDoor.play()
@@ -159,6 +169,17 @@ export default {
         this.leaveRoom()
         this.$router.push('/')
       }
+    },
+    sendAction() {
+      console.log('click')
+      this.videoObjects.map(($v) => {
+        console.log($v.id)
+        this.$refs.video.rtcmConnection.send({ testtext: 'Hello' })
+      })
+    },
+    handleAction(message) {
+      console.log(1)
+      console.log(message)
     }
   },
   head() {
