@@ -28,11 +28,8 @@ export default {
       return {
         url:
           window.location.origin + '/invite/' + this.$store.getters.getRoomId,
-        text:
-          'Komm mit in ' +
-          this.$store.getters.getRoomId +
-          ' und trink ein Bier mit mir.',
-        title: 'Teile ' + this.$store.getters.getRoomId
+        title:
+          'Komm und trink ein Bier mit mir in ' + this.$store.getters.getRoomId
       }
     }
   },
