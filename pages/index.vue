@@ -6,6 +6,7 @@
       <fieldset>
         <label for="room-id">Name:</label
         ><input
+          id="room-id"
           v-model="roomId"
           type="text"
           name="room-id"

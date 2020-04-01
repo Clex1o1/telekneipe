@@ -9,13 +9,23 @@
         Danke auch an alle, die in dieser Zeit ihren Job machen, damit es uns
         weiterhin gut geht.<br />
         A special thanks to
-        <a href="https://muazkhan.com/" target="_blank">Muaz Khan</a> for his
-        WebRTC Javascript library and
-        <a href="http://www.westonsoftware.com/" target="_blank">Andy Weston</a>
+        <a rel="noreferrer" href="https://muazkhan.com/" target="_blank"
+          >Muaz Khan</a
+        >
+        for his WebRTC Javascript library and
+        <a
+          rel="noreferrer"
+          href="http://www.westonsoftware.com/"
+          target="_blank"
+          >Andy Weston</a
+        >
         for his Vue implementation. Design by
-        <a href="https://bandeins.de/" target="_blank">Max Müsgens</a>. Concept
-        & idea by
-        <a href="https://handkemacht.com/" target="_blank">Markus Handke.</a>
+        <a rel="noreferrer" href="https://bandeins.de/" target="_blank"
+          >Max Müsgens</a
+        >. Concept & idea by
+        <a rel="noreferrer" href="https://handkemacht.com/" target="_blank"
+          >Markus Handke.</a
+        >
       </p>
     </div>
     <copyright />

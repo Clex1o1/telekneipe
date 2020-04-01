@@ -10,11 +10,16 @@
         hast schon eine Hilfsmöglichkeit eingerichtet? Setze dich mit uns in
         Kontakt und wir veröffentlichen dein Paypal-Spendenkonto bzw. den Link
         zu deiner Aktion. Einfach eine kurze Mail an:
-        <a href="mailto:alex@telefonkneip.de">alex@telefonkneip.de</a>
+        <a rel="noreferrer" href="mailto:alex@telefonkneip.de"
+          >alex@telefonkneip.de</a
+        >
       </p>
       <p>
         Support us on
-        <a href="https://github.com/clexi/telekneipe" target="_blank"
+        <a
+          rel="noreferrer"
+          href="https://github.com/clexi/telekneipe"
+          target="_blank"
           >Github <img class="icon" src="@/assets/icons/github.svg" alt="Github"
         /></a>
       </p>

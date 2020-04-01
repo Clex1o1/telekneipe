@@ -4,6 +4,9 @@ export default {
    ** Headers of the page
    */
   head: {
+    htmlAttrs: {
+      lang: 'de'
+    },
     title: 'Telekneipe',
     meta: [
       { charset: 'utf-8' },
