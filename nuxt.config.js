@@ -52,6 +52,10 @@ export default {
      ** You can extend webpack config here
      */
     extend(config, ctx) {}
+  },
+  babel: {
+    presets: ['@nuxt/babel-preset-app'],
+    plugins: ['@babel/plugin-transform-runtime']
   }
   // generate: {
   //   routes: ['/room', '/invite']
