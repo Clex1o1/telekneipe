@@ -9,6 +9,7 @@
       class="link"
       >Telefonkneipe</a
     >
+    <nuxt-link to="imprint" class="link">Impressum</nuxt-link>
   </footer>
 </template>
 <script>
@@ -21,5 +22,10 @@ export default {}
 }
 .link:last-child {
   border: none;
+}
+@media screen and (max-width: 992px) {
+  .link {
+    font-size: var(--font-size-small);
+  }
 }
 </style>

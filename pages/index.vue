@@ -12,6 +12,7 @@
           name="room-id"
           class="text-input"
           maxlength="50"
+          @keyup.enter="$router.push('room/' + encodeURI(roomId))"
         />
       </fieldset>
       <nuxt-link class="button" :to="'room/' + encodeURI(roomId)"
@@ -49,7 +50,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .join-screen {
   width: 100%;
   max-width: 86%;
