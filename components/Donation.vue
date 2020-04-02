@@ -124,6 +124,7 @@ ul.vs__dropdown-menu li {
 
 .vs__dropdown-option {
   list-style-type: none;
+  cursor: pointer;
 }
 .vs__dropdown-option--selected {
   color: var(--color-primary);
