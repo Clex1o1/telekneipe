@@ -2,7 +2,7 @@
   <div class="container">
     <div ref="videoContainer" class="video-container">
       <transition name="fade">
-        <vue-webrtc
+        <!-- <vue-webrtc
           v-show="showVideos"
           ref="video"
           width="100%"
@@ -14,7 +14,19 @@
           @joined-room="joinedRoom"
           @left-room="leftRoom"
         >
-        </vue-webrtc>
+        </vue-webrtc> -->
+        <web-rtc-stream
+          v-show="showVideos"
+          ref="video"
+          width="100%"
+          :socket-u-r-l="'https://telekneipe-server.classen.rocks/'"
+          :room-id="roomId"
+          :camera-height="videoHeight"
+          :class="'videos ' + videoCountClass"
+          @opened-room="openedRoom"
+          @joined-room="joinedRoom"
+          @left-room="leftRoom"
+        />
       </transition>
       <action-button
         v-for="videoItem in videoObjects"
@@ -46,13 +58,11 @@
 </template>
 
 <script>
-import * as io from 'socket.io-client'
-if (process.client) {
-  window.io = io
-}
+import webRtcStream from '@/components/webRtcStream'
 
 export default {
   components: {
+    webRtcStream,
     Controls: () => import('@/components/controls/Controls'),
     ActionButton: () => import('@/components/action-button')
   },
@@ -78,7 +88,9 @@ export default {
     },
     videoCountClass() {
       if (this.videos.length > 8) {
-        return 'grid-50-100 '
+        return 'grid-50-100-max'
+      } else if (this.videos.length > 3) {
+        return 'grid-50-50'
       } else if (this.videos.length > 2) {
         return 'grid-50'
       } else if (this.videos.length <= 1) {
@@ -173,12 +185,10 @@ export default {
     sendAction() {
       console.log('click')
       this.videoObjects.map(($v) => {
-        console.log($v.id)
         this.$refs.video.rtcmConnection.send({ testtext: 'Hello' })
       })
     },
     handleAction(message) {
-      console.log(1)
       console.log(message)
     }
   },
@@ -240,6 +250,10 @@ export default {
   object-fit: cover;
   object-position: center center;
 }
+.videos.video-list.grid-50-100-max {
+  grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
+  max-height: 100%;
+}
 @media screen and (max-width: 992px) and (orientation: portrait) {
   .videos.video-list {
     grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
@@ -248,7 +262,7 @@ export default {
   .videos.video-list.grid-50 {
     grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
   }
-  .videos.video-list.grid-50-100 {
+  .videos.video-list.grid-50-100-max {
     grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
     max-height: 100%;
   }
