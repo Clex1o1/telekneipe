@@ -218,6 +218,7 @@ export default {
   max-height: 100%;
   object-fit: cover;
   object-position: center center;
+  transform: rotateY(180deg);
 }
 @media screen and (max-width: 992px) and (orientation: portrait) {
   .videos.video-list {
