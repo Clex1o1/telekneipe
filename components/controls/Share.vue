@@ -26,8 +26,9 @@ export default {
   computed: {
     shareData() {
       return {
-        url:
-          window.location.origin + '/invite/' + this.$store.getters.getRoomId,
+        url: encodeURI(
+          window.location.origin + '/invite/' + this.$store.getters.getRoomId
+        ),
         title:
           'Komm und trink ein Bier mit mir in ' + this.$store.getters.getRoomId
       }
@@ -42,7 +43,9 @@ export default {
         })
       } else {
         this.$clipboard(
-          window.location.origin + '/invite/' + this.$store.getters.getRoomId
+          encodeURI(
+            window.location.origin + '/invite/' + this.$store.getters.getRoomId
+          )
         )
         this.linkCopied = true
         setTimeout(() => {
