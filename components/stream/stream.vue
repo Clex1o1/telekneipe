@@ -1,22 +1,17 @@
 <template>
   <client-only placeholder="Loading...">
     <div class="video-list">
-      <div
+      <videoItem
         v-for="item in videoList"
+        :id="item.id"
         :key="item.id"
-        :video="item"
-        class="video-item"
-      >
-        <video
-          :id="item.id"
-          ref="videos"
-          controls
-          autoplay
-          playsinline
-          :height="cameraHeight"
-          :muted="item.muted"
-        ></video>
-      </div>
+        ref="videos"
+        :camera-height="cameraHeight"
+        :muted="item.muted"
+        :stream="item.stream"
+        :controls="controls"
+        @sendAction="sendAction"
+      />
     </div>
   </client-only>
 </template>
@@ -24,6 +19,7 @@
 <script>
 import * as io from 'socket.io-client'
 import RTCMultiConnection from 'rtcmulticonnection'
+import videoItem from './videoItem'
 
 if (process.client) {
   window.io = io
@@ -31,6 +27,7 @@ if (process.client) {
 }
 
 export default {
+  components: { videoItem },
   props: {
     roomId: {
       type: String,
@@ -48,6 +45,10 @@ export default {
       type: Boolean,
       default: true
     },
+    controls: {
+      type: Boolean,
+      default: true
+    },
     enableAudio: {
       type: Boolean,
       default: true
@@ -59,22 +60,20 @@ export default {
     enableLogs: {
       type: Boolean,
       default: false
+    },
+    enableData: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
       rtcmConnection: null,
       localVideo: null,
-      videoList: [],
-      canvas: null
+      videoList: []
     }
   },
-  watch: {
-    rtcmConnection(newVal, oldval) {
-      console.log(oldval)
-      console.log(newVal)
-    }
-  },
+  watch: {},
   mounted() {
     const that = this
 
@@ -84,7 +83,8 @@ export default {
     this.rtcmConnection.enableLogs = this.enableLogs
     this.rtcmConnection.session = {
       audio: this.enableAudio,
-      video: this.enableVideo
+      video: this.enableVideo,
+      data: this.enableData
     }
     this.rtcmConnection.sdpConstraints.mandatory = {
       OfferToReceiveAudio: this.enableAudio,
@@ -97,7 +97,8 @@ export default {
       if (found === undefined) {
         const video = {
           id: stream.streamid,
-          muted: stream.type === 'local'
+          muted: stream.type === 'local',
+          stream: stream.stream
         }
 
         that.videoList.push(video)
@@ -106,15 +107,6 @@ export default {
           that.localVideo = video
         }
       }
-
-      setTimeout(function() {
-        for (let i = 0, len = that.$refs.videos.length; i < len; i++) {
-          if (that.$refs.videos[i].id === stream.streamid) {
-            that.$refs.videos[i].srcObject = stream.stream
-            break
-          }
-        }
-      }, 1000)
 
       that.$emit('joined-room', stream.streamid)
     }
@@ -128,11 +120,19 @@ export default {
       that.videoList = newList
       that.$emit('left-room', stream.streamid)
     }
-    console.log(this.rtcmConnection)
     this.rtcmConnection.onmessage = function(e) {
-      console.log(e)
+      that.$emit('onmessage', e)
     }
   },
+  beforeDestroy() {
+    /* ToDo which is the real total disconnect? */
+    if (this.rtcmConnection) {
+      this.rtcmConnection.disconnect()
+      this.rtcmConnection.close()
+      this.rtcmConnection.closeSocket()
+    }
+  },
+  destroyed() {},
   methods: {
     join() {
       const that = this
@@ -150,11 +150,17 @@ export default {
         localStream.stop()
       })
       this.videoList = []
+    },
+    sendAction(event) {
+      this.$emit('sendAction', event)
     }
   }
 }
 </script>
 <style scoped>
+.video-list {
+  perspective: 100px;
+}
 .video-list div {
   padding: 0px;
 }

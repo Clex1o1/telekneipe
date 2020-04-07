@@ -62,10 +62,14 @@ export default {
   top: 0;
   left: 0;
   right: 0;
+  bottom: 0;
   max-width: 100vw;
   max-height: 100vh;
-  bottom: 0;
   box-shadow: inset 0px 0px 55px 15px rgba(0, 0, 0, 0.75);
+  pointer-events: none;
+}
+.controls > * {
+  pointer-events: all;
 }
 .fade-controls-enter,
 .fade-controls-leave-to {

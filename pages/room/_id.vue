@@ -2,38 +2,24 @@
   <div class="container">
     <div ref="videoContainer" class="video-container">
       <transition name="fade">
-        <!-- <vue-webrtc
+        <stream
           v-show="showVideos"
-          ref="video"
+          ref="stream"
           width="100%"
           :socket-u-r-l="'https://telekneipe-server.classen.rocks/'"
           :room-id="roomId"
           :camera-height="videoHeight"
           :class="'videos ' + videoCountClass"
+          :controls="false"
           @opened-room="openedRoom"
           @joined-room="joinedRoom"
           @left-room="leftRoom"
-        >
-        </vue-webrtc> -->
-        <web-rtc-stream
-          v-show="showVideos"
-          ref="video"
-          width="100%"
-          :socket-u-r-l="'https://telekneipe-server.classen.rocks/'"
-          :room-id="roomId"
-          :camera-height="videoHeight"
-          :class="'videos ' + videoCountClass"
-          @opened-room="openedRoom"
-          @joined-room="joinedRoom"
-          @left-room="leftRoom"
+          @onmessage="handleAction"
+          @sendAction="sendAction"
         />
       </transition>
-      <action-button
-        v-for="videoItem in videoObjects"
-        :key="videoItem.id"
-        @sendAction="sendAction"
-      />
     </div>
+    <message v-if="message" :message="message" />
     <audio
       ref="soundBeer"
       preload="true"
@@ -45,6 +31,12 @@
       preload="true"
       class="sound door"
       src="/sounds/door.mp3"
+    ></audio>
+    <audio
+      ref="soundClink"
+      preload="true"
+      class="sound clink"
+      src="/sounds/clink.mp3"
     ></audio>
     <controls
       :should-show-controls="showingControls || showingControlsBlocking"
@@ -58,13 +50,13 @@
 </template>
 
 <script>
-import webRtcStream from '@/components/webRtcStream'
+import stream from '@/components/stream/stream'
 
 export default {
   components: {
-    webRtcStream,
+    stream,
     Controls: () => import('@/components/controls/Controls'),
-    ActionButton: () => import('@/components/action-button')
+    Message: () => import('@/components/actions/message')
   },
   data() {
     return {
@@ -76,15 +68,16 @@ export default {
       showingControls: false,
       showingControlsBlocking: false,
       videos: [],
-      videoObjects: {}
+      videoObjects: {},
+      message: null
     }
   },
   computed: {
     roomRunning() {
-      return typeof this.$refs.video !== 'undefined'
+      return typeof this.$refs.stream !== 'undefined'
     },
     localVideoId() {
-      return this.$refs.video.localVideo.id
+      return this.$refs.stream.localVideo.id
     },
     videoCountClass() {
       if (this.videos.length > 8) {
@@ -114,11 +107,11 @@ export default {
     this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio)
     this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio)
     document.addEventListener('mousemove', this.showControls)
-    this.$refs.video.rtcmConnection.onmessage(this.handleAction)
+    this.$refs.stream.rtcmConnection.onmessage(this.handleAction)
   },
   updated() {
-    if (typeof this.$refs.video.$refs.videos !== 'undefined') {
-      this.$refs.video.$refs.videos.map(($v) => {
+    if (typeof this.$refs.stream.$refs.videos !== 'undefined') {
+      this.$refs.stream.$refs.videos.map(($v) => {
         $v.controls = false
       })
     }
@@ -136,23 +129,23 @@ export default {
       this.playing = !this.playing
     },
     joinRoom() {
-      this.$refs.video.join()
+      this.$refs.stream.join()
       this.$store.commit(
         'setVideoLink',
         window.location.origin + '?roomId=' + encodeURIComponent(this.roomId)
       )
     },
     leaveRoom() {
-      this.$refs.video.leave()
+      this.$refs.stream.leave()
     },
     openedRoom(video) {},
     joinedRoom(video) {
       this.showVideos = true
       if (this.loadedAudio === true) this.$refs.soundBeer.play()
-      if (typeof this.$refs.video.$refs.videos !== 'undefined')
-        this.videos = this.$refs.video.$refs.videos
-      if (typeof this.$refs.video.videoList !== 'undefined')
-        this.videoObjects = this.$refs.video.videoList
+      if (typeof this.$refs.stream.$refs.videos !== 'undefined')
+        this.videos = this.$refs.stream.$refs.videos
+      if (typeof this.$refs.stream.videoList !== 'undefined')
+        this.videoObjects = this.$refs.stream.videoList
     },
     leftRoom(video) {
       if (this.loadedAudio === true) this.$refs.soundDoor.play()
@@ -182,14 +175,62 @@ export default {
         this.$router.push('/')
       }
     },
-    sendAction() {
-      console.log('click')
-      this.videoObjects.map(($v) => {
-        this.$refs.video.rtcmConnection.send({ testtext: 'Hello' })
-      })
+    sendAction(event) {
+      if (event.to === 'all') {
+        this.$refs.stream.rtcmConnection.send({
+          to: 'all',
+          message: 'cheers all'
+        })
+        this.cheersAll()
+      } else {
+        this.videoObjects.map(($v) => {
+          if ($v.id === event.to)
+            this.$refs.stream.rtcmConnection.send(
+              { to: $v.id, message: 'cheers' },
+              $v.id
+            )
+        })
+        this.cheersOne(event.to)
+      }
     },
     handleAction(message) {
-      console.log(message)
+      if (typeof message !== 'function') {
+        if (message.data.to === 'all') {
+          this.cheersAll()
+        } else {
+          this.cheersOne(message.data.to)
+        }
+      }
+    },
+    cheersAll() {
+      this.$refs.stream.$refs.videos.map(($item) => {
+        $item.allActive = true
+      })
+      this.message = { text: '🍻' }
+      this.$refs.soundClink.play()
+
+      setTimeout(() => {
+        this.message = null
+        this.$refs.stream.$refs.videos.map(($item) => {
+          $item.allActive = false
+        })
+      }, 3000)
+    },
+    cheersOne(to) {
+      this.$refs.stream.$refs.videos.map(($item) => {
+        if ($item.id === to || $item.id === this.localVideoId) {
+          $item.activeVideo = true
+        }
+      })
+      this.message = { text: '🍻' }
+      this.$refs.soundClink.play()
+
+      setTimeout(() => {
+        this.message = null
+        this.$refs.stream.$refs.videos.map(($item) => {
+          $item.activeVideo = false
+        })
+      }, 3000)
     }
   },
   head() {
@@ -236,20 +277,6 @@ export default {
   grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
 }
 
-.videos.video-list .video-item {
-  background: transparent !important;
-  object-fit: cover;
-}
-.videos.video-list .video-item video {
-  max-width: 100%;
-  -webkit-border-radius: 1px;
-  border-radius: 1px;
-  width: 100%;
-  height: 100%;
-  max-height: 100%;
-  object-fit: cover;
-  object-position: center center;
-}
 .videos.video-list.grid-50-100-max {
   grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
   max-height: 100%;
