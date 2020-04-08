@@ -31,6 +31,7 @@
         :value="selectedMail ? selectedMail.email : ''"
       />
       <input
+        v-if="selectedMail && selectedMail.email"
         ref="donationButton"
         type="image"
         src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif"
@@ -40,6 +41,13 @@
         alt="Spenden mit dem PayPal-Button"
         class="donation-button"
       />
+      <a
+        v-else-if="selectedMail && selectedMail.link"
+        class="button"
+        :href="selectedMail.link"
+        >Spenden</a
+      >
+      <a v-else class="button">Spenden</a>
     </form>
   </div>
 </template>
@@ -49,7 +57,12 @@ export default {
     selectedMail: '',
     emailAdresses: [
       /* { email: 'alexander@classen.rocks', name: 'Alexander Classen' } */
-      { email: 'rettedeinhoteleuropa@gmx.de', name: 'Hotel Europa (Aachen)' }
+      { email: 'rettedeinhoteleuropa@gmx.de', name: 'Hotel Europa (Aachen)' },
+      {
+        email: false,
+        link: 'https://paypal.me/pools/c/8nuwwdSrAJ',
+        name: 'Wild Rover (Aachen)'
+      }
       // { email: 'alexander@classen.rocks222', name: 'Alexander Classen 2' }
     ],
     OpenIndicator: {
