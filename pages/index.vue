@@ -44,7 +44,14 @@ export default {
   /* ToDo load socket local */
   head() {
     return {
-      title: this.roomId + ' Telekneipe'
+      title: this.roomId + ' Telekneipe',
+      meta: [
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Lade deine Freunde in deine eigene Telekneipe ein!'
+        }
+      ]
     }
   }
 }
