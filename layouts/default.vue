@@ -54,6 +54,7 @@
   --color-text-alternative: #000;
   --color-background: #000;
   --color-background-light: #0f0f0f;
+  --color-green: #00ff00;
   --color-yellow: #ffe000;
   --color-red: #ff4b35;
   --color-blue: #0b51ff;
