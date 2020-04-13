@@ -11,7 +11,7 @@
         Kontakt und wir veröffentlichen dein Paypal-Spendenkonto bzw. den Link
         zu deiner Aktion. Einfach eine kurze Mail an:
         <a rel="noreferrer" href="mailto:alex@telefonkneipe.de"
-          >alex@telefonkneip.de</a
+          >alex@telefonkneipe.de</a
         >
       </p>
       <p>
