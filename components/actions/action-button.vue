@@ -41,8 +41,8 @@ export default {
 <style scoped>
 .action-button {
   position: absolute;
-  bottom: 12%;
-  right: 8%;
+  bottom: 75px;
+  right: 75px;
 }
 .action-buttons {
   position: relative;
@@ -64,8 +64,8 @@ export default {
   position: absolute;
   background: var(--color-blue);
   border-radius: 100%;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   color: var(--color-text);
   display: flex;
   align-items: center;
