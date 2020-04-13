@@ -123,6 +123,85 @@ export default {
     this.rtcmConnection.onmessage = function(e) {
       that.$emit('onmessage', e)
     }
+    this.rtcmConnection.onerror = function(e) {
+      that.$emit('error', e)
+    }
+    this.rtcmConnection.onMediaError = function(e) {
+      that.$emit('erro', e)
+    }
+
+    // STAR_FIX_VIDEO_AUTO_PAUSE_ISSUES
+    // via: https://github.com/muaz-khan/RTCMultiConnection/issues/778#issuecomment-524853468
+    const bitrates = 512
+    const resolutions = 'Ultra-HD'
+    let videoConstraints = {}
+
+    if (resolutions === 'HD') {
+      videoConstraints = {
+        width: {
+          ideal: 1280
+        },
+        height: {
+          ideal: 720
+        },
+        frameRate: 30
+      }
+    }
+
+    if (resolutions === 'Ultra-HD') {
+      videoConstraints = {
+        width: {
+          ideal: 1920
+        },
+        height: {
+          ideal: 1080
+        },
+        frameRate: 30
+      }
+    }
+
+    this.rtcmConnection.mediaConstraints = {
+      video: videoConstraints,
+      audio: true
+    }
+
+    const CodecsHandler = this.rtcmConnection.CodecsHandler
+
+    this.rtcmConnection.processSdp = function(sdp) {
+      const codecs = 'vp8'
+
+      if (codecs.length) {
+        sdp = CodecsHandler.preferCodec(sdp, codecs.toLowerCase())
+      }
+
+      if (resolutions === 'HD') {
+        sdp = CodecsHandler.setApplicationSpecificBandwidth(sdp, {
+          audio: 128,
+          video: bitrates,
+          screen: bitrates
+        })
+
+        sdp = CodecsHandler.setVideoBitrates(sdp, {
+          min: bitrates * 8 * 1024,
+          max: bitrates * 8 * 1024
+        })
+      }
+
+      if (resolutions === 'Ultra-HD') {
+        sdp = CodecsHandler.setApplicationSpecificBandwidth(sdp, {
+          audio: 128,
+          video: bitrates,
+          screen: bitrates
+        })
+
+        sdp = CodecsHandler.setVideoBitrates(sdp, {
+          min: bitrates * 8 * 1024,
+          max: bitrates * 8 * 1024
+        })
+      }
+
+      return sdp
+    }
   },
   beforeDestroy() {
     /* ToDo which is the real total disconnect? */
@@ -138,8 +217,12 @@ export default {
       const that = this
       this.rtcmConnection.openOrJoin(this.roomId, function(
         isRoomExist,
-        roomid
+        roomid,
+        error
       ) {
+        if (error) {
+          that.$emit('error', error)
+        }
         if (isRoomExist === true && that.rtcmConnection.isInitiator === true) {
           that.$emit('opened-room', roomid)
         }
