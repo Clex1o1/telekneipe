@@ -184,13 +184,16 @@ export default {
         this.cheersAll()
       } else {
         this.videoObjects.map(($v) => {
-          if ($v.id === event.to)
-            this.$refs.stream.rtcmConnection.send(
-              { from: this.localVideoId, to: $v.id, message: 'cheers' },
-              $v.id
-            )
+          if ($v.id === event.to) {
+            const message = {
+              from: this.localVideoId,
+              to: $v.id,
+              message: 'cheers'
+            }
+            this.$refs.stream.rtcmConnection.send(message, $v.id)
+            this.cheersOne(message)
+          }
         })
-        this.cheersOne(event)
       }
     },
     handleAction(message) {
@@ -214,15 +217,11 @@ export default {
         this.$refs.stream.$refs.videos.map(($item) => {
           $item.allActive = false
         })
-      }, 3000)
+      }, 1000)
     },
     cheersOne(message) {
       this.$refs.stream.$refs.videos.map(($item) => {
-        if (
-          $item.id === message.to ||
-          $item.id === this.localVideoId ||
-          $item.id === message.from
-        ) {
+        if ($item.id === message.to || $item.id === message.from) {
           $item.activeVideo = true
         }
       })
@@ -234,7 +233,7 @@ export default {
         this.$refs.stream.$refs.videos.map(($item) => {
           $item.activeVideo = false
         })
-      }, 3000)
+      }, 1000)
     }
   },
   head() {
