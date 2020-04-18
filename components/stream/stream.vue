@@ -76,6 +76,7 @@ export default {
   },
   watch: {},
   mounted() {
+    window.addEventListener('beforeunload', this.quit)
     const that = this
 
     this.rtcmConnection = new RTCMultiConnection()
@@ -108,10 +109,11 @@ export default {
           that.localVideo = video
         }
       }
-
+      // console.log(that.rtcmConnection.getRemoteStreams())
       that.$emit('joined-room', stream.streamid)
     }
     this.rtcmConnection.onstreamended = function(stream) {
+      // console.log(stream)
       const newList = []
       that.videoList.forEach(function(item) {
         if (item.id !== stream.streamid) {
@@ -206,13 +208,11 @@ export default {
   },
   beforeDestroy() {
     /* ToDo which is the real total disconnect? */
-    if (this.rtcmConnection) {
-      this.rtcmConnection.disconnect()
-      this.rtcmConnection.close()
-      this.rtcmConnection.closeSocket()
-    }
+    this.quit()
   },
-  destroyed() {},
+  destroyed() {
+    window.removeEventListener('beforeunload', this.quit)
+  },
   methods: {
     join() {
       const that = this
@@ -237,6 +237,17 @@ export default {
     },
     sendAction(event) {
       this.$emit('sendAction', event)
+    },
+    quit() {
+      this.rtcmConnection.attachStreams.forEach(function(localStream) {
+        localStream.stop()
+      })
+      this.videoList = []
+      if (this.rtcmConnection) {
+        this.rtcmConnection.disconnect()
+        this.rtcmConnection.close()
+        this.rtcmConnection.closeSocket()
+      }
     }
   }
 }

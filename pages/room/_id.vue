@@ -62,7 +62,6 @@ export default {
     return {
       roomId: this.$route.params.id,
       videoHeight: 'auto',
-      loadedAudio: false,
       playing: false,
       showVideos: false,
       showingControls: false,
@@ -107,19 +106,7 @@ export default {
     if (this.roomId) {
       this.joinRoom()
     }
-    document.body.addEventListener(
-      'touchstart',
-      function() {
-        if (this.audioTracks) {
-          for (const audio of this.audioTracks) {
-            audio.play()
-            audio.pause()
-            audio.currentTime = 0
-          }
-        }
-      },
-      false
-    )
+    document.body.addEventListener('touchstart', this.canPlayAudio, false)
     document.addEventListener('mousemove', this.showControls)
     this.$refs.stream.rtcmConnection.onmessage(this.handleAction)
   },
@@ -131,13 +118,18 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$refs.soundBeer.removeEventListener('canplay', this.canPlayAudio)
-    this.$refs.soundDoor.removeEventListener('canplay', this.canPlayAudio)
+    document.body.removeEventListener('touchstart', this.canPlayAudio, false)
     document.removeEventListener('mousemove', this.showControls)
   },
   methods: {
     canPlayAudio() {
-      this.loadedAudio = true
+      if (this.audioTracks) {
+        for (const audio of this.audioTracks) {
+          audio.play()
+          audio.pause()
+          audio.currentTime = 0
+        }
+      }
     },
     isPlaying() {
       this.playing = !this.playing
@@ -155,18 +147,19 @@ export default {
     openedRoom(video) {},
     joinedRoom(video) {
       this.showVideos = true
-      if (this.loadedAudio === true) this.$refs.soundBeer.play()
+      this.$refs.soundBeer.play()
       if (typeof this.$refs.stream.$refs.videos !== 'undefined')
         this.videos = this.$refs.stream.$refs.videos
       if (typeof this.$refs.stream.videoList !== 'undefined')
         this.videoObjects = this.$refs.stream.videoList
+      console.log(this.$refs.stream.videoList)
     },
     leftRoom(video) {
       if (typeof this.$refs.stream.$refs.videos !== 'undefined')
         this.videos = this.$refs.stream.$refs.videos
       if (typeof this.$refs.stream.videoList !== 'undefined')
         this.videoObjects = this.$refs.stream.videoList
-      if (this.loadedAudio === true) this.$refs.soundDoor.play()
+      this.$refs.soundDoor.play()
     },
     showControls() {
       setTimeout(() => {
