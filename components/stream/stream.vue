@@ -6,6 +6,7 @@
         :id="item.id"
         :key="item.id"
         ref="videos"
+        :is-local-video="item.id === localVideo.id"
         :camera-height="cameraHeight"
         :muted="item.muted"
         :stream="item.stream"
