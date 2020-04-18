@@ -91,6 +91,9 @@ export default {
       } else {
         return 'grid-100'
       }
+    },
+    audioTracks() {
+      return [this.$refs.soundBeer, this.$refs.soundDoor, this.$refs.soundClink]
     }
   },
   created() {
@@ -104,8 +107,19 @@ export default {
     if (this.roomId) {
       this.joinRoom()
     }
-    this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio)
-    this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio)
+    document.body.addEventListener(
+      'touchstart',
+      function() {
+        if (this.audioTracks) {
+          for (const audio of this.audioTracks) {
+            audio.play()
+            audio.pause()
+            audio.currentTime = 0
+          }
+        }
+      },
+      false
+    )
     document.addEventListener('mousemove', this.showControls)
     this.$refs.stream.rtcmConnection.onmessage(this.handleAction)
   },
@@ -148,6 +162,10 @@ export default {
         this.videoObjects = this.$refs.stream.videoList
     },
     leftRoom(video) {
+      if (typeof this.$refs.stream.$refs.videos !== 'undefined')
+        this.videos = this.$refs.stream.$refs.videos
+      if (typeof this.$refs.stream.videoList !== 'undefined')
+        this.videoObjects = this.$refs.stream.videoList
       if (this.loadedAudio === true) this.$refs.soundDoor.play()
     },
     showControls() {
