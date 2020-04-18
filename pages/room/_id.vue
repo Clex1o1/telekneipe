@@ -152,7 +152,7 @@ export default {
         this.videos = this.$refs.stream.$refs.videos
       if (typeof this.$refs.stream.videoList !== 'undefined')
         this.videoObjects = this.$refs.stream.videoList
-      console.log(this.$refs.stream.videoList)
+      // console.log(this.$refs.stream.videoList)
     },
     leftRoom(video) {
       if (typeof this.$refs.stream.$refs.videos !== 'undefined')
