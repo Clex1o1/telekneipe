@@ -77,6 +77,7 @@ export default {
   watch: {},
   mounted() {
     const iOS = ['iPad', 'iPhone', 'iPod'].includes(navigator.platform)
+    alert(iOS)
     const eventName = iOS ? 'pagehide' : 'beforeunload'
     window.addEventListener(eventName, this.quit)
 
@@ -163,6 +164,7 @@ export default {
     },
     leave() {
       this.rtcmConnection.attachStreams.forEach(function(localStream) {
+        alert('leave')
         localStream.stop()
       })
       this.videoList = []
@@ -171,7 +173,7 @@ export default {
       this.$emit('sendAction', event)
     },
     quit() {
-      // console.log(123)
+      alert('quit')
       this.rtcmConnection.attachStreams.forEach(function(localStream) {
         localStream.stop()
       })
