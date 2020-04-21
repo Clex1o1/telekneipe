@@ -74,13 +74,7 @@ export default {
       videoList: []
     }
   },
-  watch: {},
   mounted() {
-    const iOS = ['iPad', 'iPhone', 'iPod'].includes(navigator.platform)
-    alert(iOS)
-    const eventName = iOS ? 'pagehide' : 'beforeunload'
-    window.addEventListener(eventName, this.quit)
-
     const that = this
 
     this.rtcmConnection = new RTCMultiConnection()
@@ -116,7 +110,6 @@ export default {
       that.$emit('joined-room', stream.streamid)
     }
     this.rtcmConnection.onstreamended = function(stream) {
-      // console.log(that.videoList)
       const newList = []
       that.videoList.forEach(function(item) {
         if (item.id !== stream.streamid) {
@@ -124,7 +117,6 @@ export default {
         }
       })
       that.videoList = newList
-      // console.log(newList)
       that.$emit('left-room', stream.streamid)
     }
     this.rtcmConnection.onmessage = function(e) {
@@ -140,11 +132,6 @@ export default {
   beforeDestroy() {
     /* ToDo which is the real total disconnect? */
     this.quit()
-  },
-  destroyed() {
-    const iOS = ['iPad', 'iPhone', 'iPod'].includes(navigator.platform)
-    const eventName = iOS ? 'pagehide' : 'beforeunload'
-    window.removeEventListener(eventName, this.quit)
   },
   methods: {
     join() {
@@ -164,7 +151,6 @@ export default {
     },
     leave() {
       this.rtcmConnection.attachStreams.forEach(function(localStream) {
-        alert('leave')
         localStream.stop()
       })
       this.videoList = []
@@ -173,7 +159,6 @@ export default {
       this.$emit('sendAction', event)
     },
     quit() {
-      alert('quit')
       this.rtcmConnection.attachStreams.forEach(function(localStream) {
         localStream.stop()
       })
