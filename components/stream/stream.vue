@@ -78,6 +78,7 @@ export default {
     const that = this
 
     this.rtcmConnection = new RTCMultiConnection()
+
     this.rtcmConnection.socketURL = this.socketURL
     this.rtcmConnection.autoCreateMediaElement = false
     this.rtcmConnection.enableLogs = this.enableLogs
@@ -90,6 +91,20 @@ export default {
       OfferToReceiveAudio: this.enableAudio,
       OfferToReceiveVideo: this.enableVideo
     }
+    /* ice server config */
+    this.rtcmConnection.iceServers = []
+
+    // second step, set STUN url
+    this.rtcmConnection.iceServers.push({
+      urls: 'stun:turn.classen.rocks:3478'
+    })
+
+    // last step, set TURN url (recommended)
+    this.rtcmConnection.iceServers.push({
+      urls: 'turn:turn.classen.rocks:5349',
+      credential: 'crape-join-scherzo',
+      username: 'alexander'
+    })
     this.rtcmConnection.onstream = function(stream) {
       const found = that.videoList.find((video) => {
         return video.id === stream.streamid
