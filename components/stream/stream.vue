@@ -98,12 +98,12 @@ export default {
 
     // second step, set STUN url
     this.rtcmConnection.iceServers.push({
-      urls: 'stun:turn.classen.rocks:3478'
+      urls: 'stun:stun.service.classen.rocks:5349'
     })
 
     // last step, set TURN url (recommended)
     this.rtcmConnection.iceServers.push({
-      urls: 'turn:turn.classen.rocks:5349',
+      urls: 'turn:turn.service.classen.rocks:5349',
       credential: 'crape-join-scherzo',
       username: 'alexander'
     })
