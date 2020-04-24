@@ -14,11 +14,3 @@ export default {
   mixins: [icon]
 }
 </script>
-<style scoped>
-.icon.leave {
-  cursor: pointer;
-  position: absolute;
-  right: var(--space-medium);
-  top: var(--space-medium);
-}
-</style>

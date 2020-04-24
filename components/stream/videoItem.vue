@@ -19,7 +19,11 @@
     <transition name="show-video-overlay">
       <div v-if="unactiveVideo" class="video-overlay"></div>
     </transition>
-    <action-button :target-id="id" @sendAction="sendAction" />
+    <action-button
+      v-if="!isLocalVideo"
+      :target-id="id"
+      @sendAction="sendAction"
+    />
   </div>
 </template>
 <script>
@@ -32,7 +36,8 @@ export default {
     cameraHeight: { default: 'auto', type: String },
     muted: { default: true, type: Boolean },
     controls: { default: true, type: Boolean },
-    stream: undefined
+    stream: undefined,
+    isLocalVideo: { default: false, type: Boolean }
   },
   data: () => ({
     allActive: false,
@@ -63,7 +68,8 @@ export default {
 }
 .video-item {
   will-change: transform;
-  transition: transform 600ms ease-in-out;
+  transition: transform 300ms ease;
+  position: relative;
 }
 .video-overlay {
   position: absolute;
@@ -89,6 +95,6 @@ export default {
 .show-video-overlay-enter-active,
 .show-video-overlay-leave-active {
   will-change: opacity;
-  transition: opacity 600ms ease-in-out;
+  transition: opacity 300ms ease;
 }
 </style>

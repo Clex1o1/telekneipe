@@ -11,9 +11,9 @@
           :camera-height="videoHeight"
           :class="'videos ' + videoCountClass"
           :controls="false"
-          @opened-room="openedRoom"
-          @joined-room="joinedRoom"
-          @left-room="leftRoom"
+          @openedRoom="openedRoom"
+          @joinedRoom="joinedRoom"
+          @leftRoom="leftRoom"
           @onmessage="handleAction"
           @sendAction="sendAction"
         />
@@ -62,7 +62,6 @@ export default {
     return {
       roomId: this.$route.params.id,
       videoHeight: 'auto',
-      loadedAudio: false,
       playing: false,
       showVideos: false,
       showingControls: false,
@@ -91,6 +90,9 @@ export default {
       } else {
         return 'grid-100'
       }
+    },
+    audioTracks() {
+      return [this.$refs.soundBeer, this.$refs.soundDoor, this.$refs.soundClink]
     }
   },
   created() {
@@ -104,8 +106,7 @@ export default {
     if (this.roomId) {
       this.joinRoom()
     }
-    this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio)
-    this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio)
+    document.body.addEventListener('touchstart', this.canPlayAudio, false)
     document.addEventListener('mousemove', this.showControls)
     this.$refs.stream.rtcmConnection.onmessage(this.handleAction)
   },
@@ -117,13 +118,18 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$refs.soundBeer.removeEventListener('canplay', this.canPlayAudio)
-    this.$refs.soundDoor.removeEventListener('canplay', this.canPlayAudio)
+    document.body.removeEventListener('touchstart', this.canPlayAudio, false)
     document.removeEventListener('mousemove', this.showControls)
   },
   methods: {
     canPlayAudio() {
-      this.loadedAudio = true
+      if (this.audioTracks) {
+        for (const audio of this.audioTracks) {
+          audio.play()
+          audio.pause()
+          audio.currentTime = 0
+        }
+      }
     },
     isPlaying() {
       this.playing = !this.playing
@@ -141,14 +147,19 @@ export default {
     openedRoom(video) {},
     joinedRoom(video) {
       this.showVideos = true
-      if (this.loadedAudio === true) this.$refs.soundBeer.play()
+      this.$refs.soundBeer.play()
       if (typeof this.$refs.stream.$refs.videos !== 'undefined')
         this.videos = this.$refs.stream.$refs.videos
       if (typeof this.$refs.stream.videoList !== 'undefined')
         this.videoObjects = this.$refs.stream.videoList
+      // console.log(this.$refs.stream.videoList)
     },
     leftRoom(video) {
-      if (this.loadedAudio === true) this.$refs.soundDoor.play()
+      if (typeof this.$refs.stream.$refs.videos !== 'undefined')
+        this.videos = this.$refs.stream.$refs.videos
+      if (typeof this.$refs.stream.videoList !== 'undefined')
+        this.videoObjects = this.$refs.stream.videoList
+      this.$refs.soundDoor.play()
     },
     showControls() {
       setTimeout(() => {
@@ -184,13 +195,16 @@ export default {
         this.cheersAll()
       } else {
         this.videoObjects.map(($v) => {
-          if ($v.id === event.to)
-            this.$refs.stream.rtcmConnection.send(
-              { to: $v.id, message: 'cheers' },
-              $v.id
-            )
+          if ($v.id === event.to) {
+            const message = {
+              from: this.localVideoId,
+              to: $v.id,
+              message: 'cheers'
+            }
+            this.$refs.stream.rtcmConnection.send(message, $v.id)
+            this.cheersOne(message)
+          }
         })
-        this.cheersOne(event.to)
       }
     },
     handleAction(message) {
@@ -198,7 +212,7 @@ export default {
         if (message.data.to === 'all') {
           this.cheersAll()
         } else {
-          this.cheersOne(message.data.to)
+          this.cheersOne(message.data)
         }
       }
     },
@@ -214,11 +228,11 @@ export default {
         this.$refs.stream.$refs.videos.map(($item) => {
           $item.allActive = false
         })
-      }, 3000)
+      }, 1000)
     },
-    cheersOne(to) {
+    cheersOne(message) {
       this.$refs.stream.$refs.videos.map(($item) => {
-        if ($item.id === to || $item.id === this.localVideoId) {
+        if ($item.id === message.to || $item.id === message.from) {
           $item.activeVideo = true
         }
       })
@@ -230,7 +244,7 @@ export default {
         this.$refs.stream.$refs.videos.map(($item) => {
           $item.activeVideo = false
         })
-      }, 3000)
+      }, 1000)
     }
   },
   head() {
