@@ -169,16 +169,16 @@ export default {
     this.rtcmConnection.onMediaError = function(e) {
       that.$emit('error', e)
     }
-    this.rtcmConnection.onNewParticipant = function(
-      participantId,
-      userPreferences
-    ) {
-      that.rtcmConnection.acceptParticipationRequest(
-        participantId,
-        userPreferences
-      )
-      that.$set(that.participants, participantId, { participantId })
-    }
+    // this.rtcmConnection.onNewParticipant = function(
+    //   participantId,
+    //   userPreferences
+    // ) {
+    //   that.rtcmConnection.acceptParticipationRequest(
+    //     participantId,
+    //     userPreferences
+    //   )
+    //   that.$set(that.participants, participantId, { participantId })
+    // }
   },
   beforeDestroy() {
     /* ToDo which is the real total disconnect? */
