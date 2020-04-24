@@ -65,6 +65,7 @@ export default {
   object-fit: cover;
   object-position: center center;
   position: relative;
+  transform: rotateY(180deg);
 }
 .video-item {
   will-change: transform;
