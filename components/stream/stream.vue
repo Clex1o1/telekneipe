@@ -71,10 +71,12 @@ export default {
     return {
       rtcmConnection: null,
       localVideo: null,
-      videoList: []
+      videoList: [],
+      participants: []
     }
   },
   mounted() {
+    /* INIT */
     const that = this
 
     this.rtcmConnection = new RTCMultiConnection()
@@ -105,6 +107,8 @@ export default {
       credential: 'crape-join-scherzo',
       username: 'alexander'
     })
+
+    // Start handling for connections and events
     this.rtcmConnection.onstream = function(stream) {
       const found = that.videoList.find((video) => {
         return video.id === stream.streamid
@@ -122,7 +126,7 @@ export default {
           that.localVideo = video
         }
       }
-      that.$emit('joined-room', stream.streamid)
+      that.$emit('joinedRoom', stream.streamid)
     }
     this.rtcmConnection.onstreamended = function(stream) {
       const newList = []
@@ -132,16 +136,48 @@ export default {
         }
       })
       that.videoList = newList
-      that.$emit('left-room', stream.streamid)
+      that.$emit('leftRoom', stream.streamid)
     }
     this.rtcmConnection.onmessage = function(e) {
       that.$emit('onmessage', e)
+    }
+
+    /* Fix safari leave */
+    this.rtcmConnection.onleave = function(participant) {
+      that.rtcmConnection.getAllParticipants().forEach((participantId) => {
+        if (participantId === participant.userid) {
+          const user = that.rtcmConnection.peers[participantId]
+          const newList = []
+          user.peer.getRemoteStreams().forEach((streamItem) => {
+            that.videoList.forEach(function(item) {
+              if (item.id !== streamItem.streamid) {
+                newList.push(item)
+              }
+            })
+            that.$emit('leftRoom', streamItem.streamid)
+          })
+          that.videoList = newList
+        }
+      })
+    }
+    this.rtcmConnection.onclose = function(e) {
+      that.$emit('close', e)
     }
     this.rtcmConnection.onerror = function(e) {
       that.$emit('error', e)
     }
     this.rtcmConnection.onMediaError = function(e) {
-      that.$emit('erro', e)
+      that.$emit('error', e)
+    }
+    this.rtcmConnection.onNewParticipant = function(
+      participantId,
+      userPreferences
+    ) {
+      that.rtcmConnection.acceptParticipationRequest(
+        participantId,
+        userPreferences
+      )
+      that.$set(that.participants, participantId, { participantId })
     }
   },
   beforeDestroy() {
@@ -160,7 +196,7 @@ export default {
           that.$emit('error', error)
         }
         if (isRoomExist === true && that.rtcmConnection.isInitiator === true) {
-          that.$emit('opened-room', roomid)
+          that.$emit('openedRoom', roomid)
         }
       })
     },

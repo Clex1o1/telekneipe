@@ -11,9 +11,9 @@
           :camera-height="videoHeight"
           :class="'videos ' + videoCountClass"
           :controls="false"
-          @opened-room="openedRoom"
-          @joined-room="joinedRoom"
-          @left-room="leftRoom"
+          @openedRoom="openedRoom"
+          @joinedRoom="joinedRoom"
+          @leftRoom="leftRoom"
           @onmessage="handleAction"
           @sendAction="sendAction"
         />
