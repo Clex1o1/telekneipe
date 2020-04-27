@@ -19,7 +19,7 @@
         />
       </transition>
     </div>
-    <message v-if="message" :message="message" />
+    <message :show-message="message" />
     <audio
       ref="soundBeer"
       preload="true"
@@ -68,7 +68,7 @@ export default {
       showingControlsBlocking: false,
       videos: [],
       videoObjects: {},
-      message: null
+      message: false
     }
   },
   computed: {
@@ -220,11 +220,11 @@ export default {
       this.$refs.stream.$refs.videos.map(($item) => {
         $item.allActive = true
       })
-      this.message = { text: '🍻' }
+      this.message = true
       this.$refs.soundClink.play()
 
       setTimeout(() => {
-        this.message = null
+        this.message = false
         this.$refs.stream.$refs.videos.map(($item) => {
           $item.allActive = false
         })
@@ -236,11 +236,11 @@ export default {
           $item.activeVideo = true
         }
       })
-      this.message = { text: '🍻' }
+      this.message = true
       this.$refs.soundClink.play()
 
       setTimeout(() => {
-        this.message = null
+        this.message = false
         this.$refs.stream.$refs.videos.map(($item) => {
           $item.activeVideo = false
         })
