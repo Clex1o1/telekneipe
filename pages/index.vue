@@ -49,7 +49,8 @@ export default {
         {
           hid: 'description',
           name: 'description',
-          content: 'Lade deine Freunde in deine eigene Telekneipe ein!'
+          content:
+            'Lade deine Freunde in deine eigene Telekneipe ein! Der Videochat im Kneipen-Flair. Du braucht keinen Account nur einen aktuellen Browser und eine Webcam mit Mikrofon und schon kannst du Zeit mit deinen Freunden in deiner Kneipe verbringen.'
         }
       ]
     }
