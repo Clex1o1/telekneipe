@@ -58,12 +58,6 @@ export default {
 }
 </script>
 <style scoped>
-.icon.share {
-  cursor: pointer;
-  position: absolute;
-  bottom: var(--space-medium);
-  right: var(--space-medium);
-}
 .copy-message {
   color: var(--color-text-alternative);
   background: var(--color-text);
@@ -71,7 +65,6 @@ export default {
   padding: calc(var(--space-small) / 2) var(--space-small);
   font-size: var(--font-size-small);
   position: absolute;
-  right: 0;
   box-sizing: content-box;
   transform: translate(0, -100%);
   top: calc(var(--space-small) / -1);

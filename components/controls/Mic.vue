@@ -24,11 +24,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.icon.mic {
-  cursor: pointer;
-  position: absolute;
-  right: var(--space-medium);
-  bottom: var(--space-medium);
-}
-</style>

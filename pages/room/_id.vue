@@ -2,21 +2,24 @@
   <div class="container">
     <div ref="videoContainer" class="video-container">
       <transition name="fade">
-        <vue-webrtc
+        <stream
           v-show="showVideos"
-          ref="video"
+          ref="stream"
           width="100%"
           :socket-u-r-l="'https://telekneipe-server.classen.rocks/'"
           :room-id="roomId"
           :camera-height="videoHeight"
           :class="'videos ' + videoCountClass"
-          @opened-room="openedRoom"
-          @joined-room="joinedRoom"
-          @left-room="leftRoom"
-        >
-        </vue-webrtc>
+          :controls="false"
+          @openedRoom="openedRoom"
+          @joinedRoom="joinedRoom"
+          @leftRoom="leftRoom"
+          @onmessage="handleAction"
+          @sendAction="sendAction"
+        />
       </transition>
     </div>
+    <message :show-message="message" />
     <audio
       ref="soundBeer"
       preload="true"
@@ -28,6 +31,12 @@
       preload="true"
       class="sound door"
       src="/sounds/door.mp3"
+    ></audio>
+    <audio
+      ref="soundClink"
+      preload="true"
+      class="sound clink"
+      src="/sounds/clink.mp3"
     ></audio>
     <controls
       :should-show-controls="showingControls || showingControlsBlocking"
@@ -41,37 +50,39 @@
 </template>
 
 <script>
-import * as io from 'socket.io-client'
-if (process.client) {
-  window.io = io
-}
+import stream from '@/components/stream/stream'
 
 export default {
   components: {
-    Controls: () => import('@/components/controls/Controls')
+    stream,
+    Controls: () => import('@/components/controls/Controls'),
+    Message: () => import('@/components/actions/message')
   },
   data() {
     return {
       roomId: this.$route.params.id,
       videoHeight: 'auto',
-      loadedAudio: false,
       playing: false,
       showVideos: false,
       showingControls: false,
       showingControlsBlocking: false,
-      videos: []
+      videos: [],
+      videoObjects: {},
+      message: false
     }
   },
   computed: {
     roomRunning() {
-      return typeof this.$refs.video !== 'undefined'
+      return typeof this.$refs.stream !== 'undefined'
     },
     localVideoId() {
-      return this.$refs.video.localVideo.id
+      return this.$refs.stream.localVideo.id
     },
     videoCountClass() {
       if (this.videos.length > 8) {
-        return 'grid-50-100 '
+        return 'grid-50-100-max'
+      } else if (this.videos.length > 3) {
+        return 'grid-50-50'
       } else if (this.videos.length > 2) {
         return 'grid-50'
       } else if (this.videos.length <= 1) {
@@ -79,6 +90,9 @@ export default {
       } else {
         return 'grid-100'
       }
+    },
+    audioTracks() {
+      return [this.$refs.soundBeer, this.$refs.soundDoor, this.$refs.soundClink]
     }
   },
   created() {
@@ -92,48 +106,60 @@ export default {
     if (this.roomId) {
       this.joinRoom()
     }
-    this.$refs.soundBeer.addEventListener('canplay', this.canPlayAudio)
-    this.$refs.soundDoor.addEventListener('canplay', this.canPlayAudio)
+    document.body.addEventListener('touchstart', this.canPlayAudio, false)
     document.addEventListener('mousemove', this.showControls)
+    this.$refs.stream.rtcmConnection.onmessage(this.handleAction)
   },
   updated() {
-    if (typeof this.$refs.video.$refs.videos !== 'undefined') {
-      this.$refs.video.$refs.videos.map(($v) => {
+    if (typeof this.$refs.stream.$refs.videos !== 'undefined') {
+      this.$refs.stream.$refs.videos.map(($v) => {
         $v.controls = false
       })
     }
   },
   beforeDestroy() {
-    this.$refs.soundBeer.removeEventListener('canplay', this.canPlayAudio)
-    this.$refs.soundDoor.removeEventListener('canplay', this.canPlayAudio)
+    document.body.removeEventListener('touchstart', this.canPlayAudio, false)
     document.removeEventListener('mousemove', this.showControls)
   },
   methods: {
     canPlayAudio() {
-      this.loadedAudio = true
+      if (this.audioTracks) {
+        for (const audio of this.audioTracks) {
+          audio.play()
+          audio.pause()
+          audio.currentTime = 0
+        }
+      }
     },
     isPlaying() {
       this.playing = !this.playing
     },
     joinRoom() {
-      this.$refs.video.join()
+      this.$refs.stream.join()
       this.$store.commit(
         'setVideoLink',
         window.location.origin + '?roomId=' + encodeURIComponent(this.roomId)
       )
     },
     leaveRoom() {
-      this.$refs.video.leave()
+      this.$refs.stream.leave()
     },
     openedRoom(video) {},
     joinedRoom(video) {
       this.showVideos = true
-      if (this.loadedAudio === true) this.$refs.soundBeer.play()
-      if (typeof this.$refs.video.$refs.videos !== 'undefined')
-        this.videos = this.$refs.video.$refs.videos
+      this.$refs.soundBeer.play()
+      if (typeof this.$refs.stream.$refs.videos !== 'undefined')
+        this.videos = this.$refs.stream.$refs.videos
+      if (typeof this.$refs.stream.videoList !== 'undefined')
+        this.videoObjects = this.$refs.stream.videoList
+      // console.log(this.$refs.stream.videoList)
     },
     leftRoom(video) {
-      if (this.loadedAudio === true) this.$refs.soundDoor.play()
+      if (typeof this.$refs.stream.$refs.videos !== 'undefined')
+        this.videos = this.$refs.stream.$refs.videos
+      if (typeof this.$refs.stream.videoList !== 'undefined')
+        this.videoObjects = this.$refs.stream.videoList
+      this.$refs.soundDoor.play()
     },
     showControls() {
       setTimeout(() => {
@@ -159,6 +185,66 @@ export default {
         this.leaveRoom()
         this.$router.push('/')
       }
+    },
+    sendAction(event) {
+      if (event.to === 'all') {
+        this.$refs.stream.rtcmConnection.send({
+          to: 'all',
+          message: 'cheers all'
+        })
+        this.cheersAll()
+      } else {
+        this.videoObjects.map(($v) => {
+          if ($v.id === event.to) {
+            const message = {
+              from: this.localVideoId,
+              to: $v.id,
+              message: 'cheers'
+            }
+            this.$refs.stream.rtcmConnection.send(message, $v.id)
+            this.cheersOne(message)
+          }
+        })
+      }
+    },
+    handleAction(message) {
+      if (typeof message !== 'function') {
+        if (message.data.to === 'all') {
+          this.cheersAll()
+        } else {
+          this.cheersOne(message.data)
+        }
+      }
+    },
+    cheersAll() {
+      this.$refs.stream.$refs.videos.map(($item) => {
+        $item.allActive = true
+      })
+      this.message = true
+      this.$refs.soundClink.play()
+
+      setTimeout(() => {
+        this.message = false
+        this.$refs.stream.$refs.videos.map(($item) => {
+          $item.allActive = false
+        })
+      }, 1000)
+    },
+    cheersOne(message) {
+      this.$refs.stream.$refs.videos.map(($item) => {
+        if ($item.id === message.to || $item.id === message.from) {
+          $item.activeVideo = true
+        }
+      })
+      this.message = true
+      this.$refs.soundClink.play()
+
+      setTimeout(() => {
+        this.message = false
+        this.$refs.stream.$refs.videos.map(($item) => {
+          $item.activeVideo = false
+        })
+      }, 1000)
     }
   },
   head() {
@@ -203,22 +289,17 @@ export default {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
-}
-
-.videos.video-list .video-item {
-  background: transparent !important;
-  object-fit: cover;
-}
-.videos.video-list .video-item video {
-  max-width: 100%;
-  -webkit-border-radius: 1px;
-  border-radius: 1px;
-  width: 100%;
-  height: 100%;
-  max-height: 100%;
+  max-height: 100vh;
   object-fit: cover;
   object-position: center center;
-  transform: rotateY(180deg);
+}
+
+.videos.videos.video-list.grid-100 {
+}
+
+.videos.video-list.grid-50-100-max {
+  grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
+  max-height: 100%;
 }
 @media screen and (max-width: 992px) and (orientation: portrait) {
   .videos.video-list {
@@ -228,7 +309,7 @@ export default {
   .videos.video-list.grid-50 {
     grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
   }
-  .videos.video-list.grid-50-100 {
+  .videos.video-list.grid-50-100-max {
     grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
     max-height: 100%;
   }

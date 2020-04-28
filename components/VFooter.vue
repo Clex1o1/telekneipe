@@ -8,8 +8,7 @@
       target="_blank"
       class="link"
       >Telefonkneipe</a
-    >
-    <nuxt-link to="imprint" class="link">Impressum</nuxt-link>
+    ><nuxt-link to="imprint" class="link">Impressum</nuxt-link>
   </footer>
 </template>
 <script>

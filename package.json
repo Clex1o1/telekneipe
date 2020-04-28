@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
+    "start-local": "NUXT_HOST=0.0.0.0 NUXT_PORT=3333 nuxt-start",
     "build": "nuxt build",
     "start": "nuxt-start",
     "generate": "nuxt generate",
@@ -15,11 +16,13 @@
     "nuxt": "^2.12.2",
     "nuxt-start": "^2.12.2",
     "socket.io-client": "^2.3.0",
-    "uuid": "^7.0.3",
     "v-clipboard": "^2.2.2",
     "vue-mq": "^1.0.1",
     "vue-select": "^3.9.5",
-    "vue-webrtc": "^1.2.0"
+    "vue-webrtc": "^1.2.0",
+    "adapterjs": "^0.15.4",
+    "rtcmulticonnection": "^3.6.8",
+    "url-parse": "^1.4.7"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",

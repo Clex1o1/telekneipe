@@ -24,11 +24,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.icon.sound {
-  cursor: pointer;
-  position: absolute;
-  left: var(--space-medium);
-  bottom: var(--space-medium);
-}
-</style>
