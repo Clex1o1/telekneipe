@@ -289,8 +289,11 @@ export default {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
+  max-height: 100vh;
 }
 
+.videos.videos.video-list.grid-100 {
+}
 .videos.video-list.grid-50-100-max {
   grid-template-columns: repeat(auto-fit, minmax(50%, 1fr));
   max-height: 100%;
