@@ -22,7 +22,7 @@
     "vue-webrtc": "^1.2.0",
     "adapterjs": "^0.15.4",
     "rtcmulticonnection": "^3.6.8",
-    "url-parse": "^1.4.7"
+    "url-parse": "^1.5.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",
